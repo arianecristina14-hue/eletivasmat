@@ -1,1603 +1,981 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FinLab Virtual — Educação Financeira & Matemática Aplicada</title>
-  <!-- Tailwind CSS -->
+  <title>FinLab Edu — Laboratório Interativo de Educação Financeira</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js para gráficos dinâmicos -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Google Fonts: Inter & JetBrains Mono -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] }
         }
       }
-    }
+    };
   </script>
   <style>
-    /* Estilização personalizada de sliders e scrollbars mantendo a identidade de laboratório */
-    input[type="range"] {
-      -webkit-appearance: none;
-      appearance: none;
-      background: transparent;
-      cursor: pointer;
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .card-green { border-top: 4px solid #10b981; }
+    .card-purple { border-top: 4px solid #8b5cf6; }
+    .card-orange { border-top: 4px solid #f59e0b; }
+    .tab-active-kids { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); }
+    .tab-active-hs { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35); }
+    @keyframes popIn {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
-    input[type="range"]::-webkit-slider-runnable-track {
-      height: 8px;
-      border-radius: 9999px;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      height: 20px;
-      width: 20px;
-      border-radius: 50%;
-      margin-top: -6px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
-      transition: transform 0.15s ease;
-    }
-    input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.15);
-    }
-
-    /* Variantes de cor dos sliders */
-    .slider-emerald::-webkit-slider-runnable-track { background: rgba(16, 185, 129, 0.25); }
-    .slider-emerald::-webkit-slider-thumb { background: #10b981; border: 2px solid #fff; }
-
-    .slider-rose::-webkit-slider-runnable-track { background: rgba(244, 63, 94, 0.25); }
-    .slider-rose::-webkit-slider-thumb { background: #f43f5e; border: 2px solid #fff; }
-
-    .slider-purple::-webkit-slider-runnable-track { background: rgba(168, 85, 247, 0.25); }
-    .slider-purple::-webkit-slider-thumb { background: #a855f7; border: 2px solid #fff; }
-
-    .slider-amber::-webkit-slider-runnable-track { background: rgba(245, 158, 11, 0.25); }
-    .slider-amber::-webkit-slider-thumb { background: #f59e0b; border: 2px solid #fff; }
-
-    .slider-sky::-webkit-slider-runnable-track { background: rgba(14, 165, 233, 0.25); }
-    .slider-sky::-webkit-slider-thumb { background: #0ea5e9; border: 2px solid #fff; }
-
-    /* Animação suave de entrada */
-    .fade-in {
-      animation: fadeIn 0.35s ease-out forwards;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Cards estilo SciLab Virtual */
-    .lab-card {
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .lab-card:hover {
-      transform: translateY(-4px);
-    }
+    .animate-pop { animation: popIn 0.25s ease-out forwards; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300 selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200">
 
-  <!-- HEADER / BARRA SUPERIOR DO LABORATÓRIO -->
-  <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-      <!-- Logo e Título -->
+  <!-- Cabeçalho -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-          <!-- Ícone SVG de Gráfico/Laboratório -->
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 15l4-4 3 3 5-7" />
-          </svg>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow">
+          ₿
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent">FinLab Virtual</span>
-            <span class="hidden sm:inline-block text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">Matemática Aplicada</span>
-          </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Simulações & Jogos de Educação Financeira</p>
+          <h1 class="font-extrabold text-lg leading-tight tracking-tight">FinLab <span class="text-emerald-600 dark:text-emerald-400">Edu</span></h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Matemática & Educação Financeira</p>
         </div>
       </div>
 
-      <!-- Controles da Direita: Botão Hub + Glossário + Tema -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        <button id="btn-back-hub" onclick="goHome()" class="hidden items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
-          <span>Voltar ao Hub</span>
+      <!-- Seletor de Trilha -->
+      <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+        <button id="btn-track-kids" onclick="setTrack('kids')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all tab-active-kids">
+          🎒 6º ao 8º Ano (12–14 anos)
         </button>
-
-        <button onclick="toggleGlossary()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 transition" title="Glossário Financeiro">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-          <span class="hidden md:inline">Glossário</span>
+        <button id="btn-track-hs" onclick="setTrack('hs')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-300">
+          🎓 Ensino Médio
         </button>
+      </div>
 
-        <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition" title="Alternar Tema Claro/Escuro">
-          <!-- Sol (modo escuro ativo) -->
-          <svg id="icon-sun" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-          <!-- Lua (modo claro ativo) -->
-          <svg id="icon-moon" class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-          </svg>
+      <div class="flex items-center gap-2">
+        <button onclick="goHome()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200/70 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+          Início
+        </button>
+        <button onclick="toggleTheme()" title="Alternar tema" class="p-2 rounded-lg bg-slate-200/70 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition text-sm">
+          🌓
         </button>
       </div>
     </div>
   </header>
 
-  <!-- CONTEÚDO PRINCIPAL -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+  <main class="max-w-6xl mx-auto px-4 py-8">
 
-    <!-- ===================================================================== -->
-    <!-- TELA 0: HUB PRINCIPAL (SELEÇÃO DE MÓDULOS)                            -->
-    <!-- ===================================================================== -->
-    <section id="view-hub" class="fade-in space-y-8">
-      <!-- Banner de Boas-vindas -->
-      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-900 dark:via-slate-800/90 dark:to-slate-950 border border-slate-200 dark:border-slate-800 p-6 sm:p-10 text-white shadow-xl">
-        <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
-        <div class="absolute -left-16 -bottom-16 w-64 h-64 rounded-full bg-purple-500/10 blur-3xl pointer-events-none"></div>
-
-        <div class="relative z-10 max-w-3xl space-y-4">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs font-semibold">
-            <span>🧪 Laboratório Interativo • Ensino Médio & BNCC</span>
-          </div>
-          <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-            Domine a Matemática do Dinheiro na Prática
-          </h1>
-          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Explore simuladores e jogos de tomada de decisão financeira. Descubra como os juros compostos podem trabalhar a seu favor (ou contra você), administre seu primeiro salário e enfrente cenários reais da economia brasileira.
-          </p>
-        </div>
+    <!-- ==================== HUB INICIAL: 6º AO 8º ANO ==================== -->
+    <section id="hub-kids" class="animate-pop">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 mb-3">
+          TRILHA FUNDAMENTAL II • 12 A 14 ANOS
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">Missões de Inteligência Financeira</h2>
+        <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+          Escolha um desafio prático para dominar escolhas de consumo, fazer sua grana render no cofrinho e calcular descontos e trocos como um mestre.
+        </p>
       </div>
 
-      <!-- Grade dos 3 Módulos (Card Verde, Card Roxo, Card Laranja) -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <!-- CARD 1: VERDE (Efeito Bola de Neve) -->
-        <div onclick="openModule('snowball')" class="lab-card cursor-pointer group rounded-3xl bg-white dark:bg-slate-900 border-2 border-emerald-500/30 hover:border-emerald-500 p-6 sm:p-7 flex flex-col justify-between shadow-lg shadow-emerald-500/5">
-          <div class="space-y-4">
-            <div class="flex items-center justify-between">
-              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                Módulo 01 • Simulador
-              </span>
-              <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Card 1 Kids -->
+        <div onclick="openModule('kids-need')" class="card-green bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">🎯</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">Consumo Consciente</span>
             </div>
-
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors">
-              Efeito "Bola de Neve": Juros Compostos vs. Dívidas
-            </h2>
-            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Escolha um objetivo (moto, viagem ou PC) e compare dois caminhos: poupar e investir antes de comprar ou parcelar no rotativo do cartão de crédito.
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-emerald-600 transition">Preciso ou Só Quero?</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Analise 10 situações do dia a dia (skin de jogo, material escolar, lanche, fone gamer) e descubra o que é necessidade real e o que é impulso.
             </p>
-
-            <div class="pt-2 flex flex-wrap gap-2">
-              <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono">M = C(1+i)^t</span>
-              <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Função Exponencial</span>
-            </div>
           </div>
-
-          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-emerald-600 dark:text-emerald-400 font-semibold text-sm">
-            <span>Iniciar Simulação</span>
-            <span class="group-hover:translate-x-1.5 transition-transform">→</span>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+            <span>Iniciar Desafio (10 rodadas)</span>
+            <span>→</span>
           </div>
         </div>
 
-        <!-- CARD 2: ROXO (Sobrevivendo ao Primeiro Salário) -->
-        <div onclick="openModule('salary')" class="lab-card cursor-pointer group rounded-3xl bg-white dark:bg-slate-900 border-2 border-purple-500/30 hover:border-purple-500 p-6 sm:p-7 flex flex-col justify-between shadow-lg shadow-purple-500/5">
-          <div class="space-y-4">
-            <div class="flex items-center justify-between">
-              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-purple-500/15 text-purple-600 dark:text-purple-400">
-                Módulo 02 • Jogo RPG
-              </span>
-              <div class="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+        <!-- Card 2 Kids -->
+        <div onclick="openModule('kids-piggy')" class="card-purple bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">🚀</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">Juros Compostos</span>
             </div>
-
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-purple-500 transition-colors">
-              Sobrevivendo ao Primeiro Salário
-            </h2>
-            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Você acaba de conseguir seu primeiro emprego (R$ 1.500/mês). Distribua seu orçamento entre necessidades, lazer e reserva ao longo de 6 meses cheios de imprevistos.
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-purple-600 transition">O Cofrinho Turbinado</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Escolha sua meta (Fone Bluetooth, Tênis ou Console) e veja como guardar toda semana com bônus de 5% faz o dinheiro crescer sozinho.
             </p>
-
-            <div class="pt-2 flex flex-wrap gap-2">
-              <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Regra 50-30-20</span>
-              <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Reserva de Emergência</span>
-            </div>
           </div>
-
-          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-purple-600 dark:text-purple-400 font-semibold text-sm">
-            <span>Jogar Desafio</span>
-            <span class="group-hover:translate-x-1.5 transition-transform">→</span>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-purple-600 dark:text-purple-400">
+            <span>Simular Minha Meta</span>
+            <span>→</span>
           </div>
         </div>
 
-        <!-- CARD 3: LARANJA (Batalha de Investimentos) -->
-        <div onclick="openModule('battle')" class="lab-card cursor-pointer group rounded-3xl bg-white dark:bg-slate-900 border-2 border-amber-500/30 hover:border-amber-500 p-6 sm:p-7 flex flex-col justify-between shadow-lg shadow-amber-500/5">
-          <div class="space-y-4">
-            <div class="flex items-center justify-between">
-              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/15 text-amber-600 dark:text-amber-400">
-                Módulo 03 • Estratégia
-              </span>
-              <div class="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
+        <!-- Card 3 Kids -->
+        <div onclick="openModule('kids-shop')" class="card-orange bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">🛒</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">Porcentagem & Troco</span>
             </div>
-
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
-              Batalha de Investimentos: Renda Fixa vs. Variável
-            </h2>
-            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Gerencie uma carteira de R$ 10.000 durante 10 anos simulados. Ajuste sua alocação entre Tesouro Selic, IPCA+, FIIs e Ações diante de crises, inflação e booms econômicos.
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-amber-600 transition">Desafio do Caixa & Desconto</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Você tem R$ 50,00 para cumprir uma lista de compras aproveitando etiquetas de 10% e 20% de desconto — e ainda precisa acertar o troco no caixa!
             </p>
-
-            <div class="pt-2 flex flex-wrap gap-2">
-              <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Selic & IPCA</span>
-              <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Risco vs. Retorno</span>
-            </div>
           </div>
-
-          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-amber-600 dark:text-amber-400 font-semibold text-sm">
-            <span>Montar Carteira</span>
-            <span class="group-hover:translate-x-1.5 transition-transform">→</span>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400">
+            <span>Entrar na Loja</span>
+            <span>→</span>
           </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ===================================================================== -->
-    <!-- MÓDULO 1: SIMULADOR EFEITO BOLA DE NEVE (VERDE)                       -->
-    <!-- ===================================================================== -->
-    <section id="view-snowball" class="hidden fade-in space-y-6">
-      <!-- Cabeçalho do Módulo -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">Módulo 01 • Simulador Matemático</span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold">Efeito "Bola de Neve": Investir vs. Parcelar</h2>
-        </div>
-        <div class="bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-2xl text-xs sm:text-sm font-mono text-emerald-700 dark:text-emerald-300">
-          Fórmula: M = C · (1 + i)ᵗ + PMT · [((1 + i)ᵗ - 1) / i]
-        </div>
-      </div>
-
-      <!-- Seletor de Objetivo -->
-      <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-        <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">1. Escolha seu Objetivo de Compra:</label>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <button onclick="selectGoal(14000, 'Moto 0km', this)" class="goal-btn active-goal p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-500/10 text-left transition">
-            <div class="text-xl mb-1">🏍️</div>
-            <div class="font-bold text-sm">Comprar uma Moto</div>
-            <div class="text-xs font-mono text-emerald-600 dark:text-emerald-400">R$ 14.000,00</div>
-          </button>
-          <button onclick="selectGoal(6500, 'Viagem dos Sonhos', this)" class="goal-btn p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 text-left transition">
-            <div class="text-xl mb-1">✈️</div>
-            <div class="font-bold text-sm">Viagem dos Sonhos</div>
-            <div class="text-xs font-mono text-slate-500 dark:text-slate-400">R$ 6.500,00</div>
-          </button>
-          <button onclick="selectGoal(5000, 'PC Gamer / Notebook', this)" class="goal-btn p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 text-left transition">
-            <div class="text-xl mb-1">💻</div>
-            <div class="font-bold text-sm">PC Gamer / Notebook</div>
-            <div class="text-xs font-mono text-slate-500 dark:text-slate-400">R$ 5.000,00</div>
-          </button>
-          <div class="p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-800 flex flex-col justify-between">
-            <div class="text-xs font-bold text-slate-500 dark:text-slate-400">🎯 Valor Personalizado (R$)</div>
-            <input type="number" id="custom-goal-input" value="14000" min="500" max="100000" step="100" oninput="updateCustomGoal(this.value)" class="mt-1 w-full bg-slate-100 dark:bg-slate-800 rounded-xl px-3 py-1.5 font-mono text-sm font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Painel Principal: Controles à Esquerda + Resultados e Gráfico à Direita -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- Controles (Sliders) -->
-        <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 space-y-6 h-fit">
-          <h3 class="font-bold text-base flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            Parâmetros da Simulação
-          </h3>
-
-          <!-- Slider 1: Valor Mensal -->
-          <div class="space-y-2">
-            <div class="flex justify-between text-sm">
-              <span class="text-slate-600 dark:text-slate-300 font-medium">Esforço Mensal (Aporte / Parcela)</span>
-              <span id="lbl-monthly" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">R$ 450,00</span>
-            </div>
-            <input type="range" id="rng-monthly" min="100" max="1500" step="25" value="450" oninput="calculateSnowball()" class="w-full slider-emerald" />
-            <div class="flex justify-between text-[11px] text-slate-400 font-mono">
-              <span>R$ 100</span>
-              <span>R$ 1.500</span>
-            </div>
-          </div>
-
-          <!-- Slider 2: Prazo de Comparação -->
-          <div class="space-y-2">
-            <div class="flex justify-between text-sm">
-              <span class="text-slate-600 dark:text-slate-300 font-medium">Horizonte de Tempo (Meses)</span>
-              <span id="lbl-months" class="font-mono font-bold text-slate-800 dark:text-white">24 meses</span>
-            </div>
-            <input type="range" id="rng-months" min="6" max="60" step="1" value="24" oninput="calculateSnowball()" class="w-full slider-emerald" />
-            <div class="flex justify-between text-[11px] text-slate-400 font-mono">
-              <span>6 meses</span>
-              <span>60 meses (5 anos)</span>
-            </div>
-          </div>
-
-          <!-- Slider 3: Taxa de Rendimento (Investimento) -->
-          <div class="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <div class="flex justify-between text-sm">
-              <span class="text-emerald-600 dark:text-emerald-400 font-medium">Rendimento Investimento (a.m.)</span>
-              <span id="lbl-invest-rate" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">1,00% a.m.</span>
-            </div>
-            <input type="range" id="rng-invest-rate" min="0.5" max="1.6" step="0.05" value="1.0" oninput="calculateSnowball()" class="w-full slider-emerald" />
-            <p class="text-[11px] text-slate-500">Ex: Tesouro Selic ou CDB rendendo ~100% do CDI.</p>
-          </div>
-
-          <!-- Slider 4: Taxa de Juros da Dívida (Cartão / Crédito) -->
-          <div class="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <div class="flex justify-between text-sm">
-              <span class="text-rose-600 dark:text-rose-400 font-medium">Juros Cartão / Rotativo (a.m.)</span>
-              <span id="lbl-debt-rate" class="font-mono font-bold text-rose-600 dark:text-rose-400">11,50% a.m.</span>
-            </div>
-            <input type="range" id="rng-debt-rate" min="4.0" max="16.0" step="0.5" value="11.5" oninput="calculateSnowball()" class="w-full slider-rose" />
-            <p class="text-[11px] text-slate-500">Média do rotativo/parcelamento de cartão no Brasil (8% a 15% a.m.).</p>
-          </div>
-        </div>
-
-        <!-- Comparação & Gráfico -->
-        <div class="lg:col-span-7 space-y-6">
-          
-          <!-- Cards Lado a Lado: Cenário A vs Cenário B -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Cenário A: Investidor Paciente -->
-            <div class="rounded-3xl bg-emerald-500/10 border-2 border-emerald-500/30 p-5 space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Cenário A • Investindo Antes</span>
-                <span class="text-lg">🌱</span>
-              </div>
-              <div>
-                <div class="text-xs text-slate-500 dark:text-slate-400">Montante acumulado em <span class="sb-months-txt font-bold">24</span> meses:</div>
-                <div id="res-invest-total" class="text-2xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">R$ 12.138,06</div>
-              </div>
-              <div class="text-xs space-y-1 pt-2 border-t border-emerald-500/20 text-slate-700 dark:text-slate-300">
-                <div class="flex justify-between">
-                  <span>Saiu do seu bolso:</span>
-                  <span id="res-invest-principal" class="font-mono font-semibold">R$ 10.800,00</span>
-                </div>
-                <div class="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold">
-                  <span>Juros recebidos (lucro):</span>
-                  <span id="res-invest-interest" class="font-mono">+ R$ 1.338,06</span>
-                </div>
-                <div class="flex justify-between pt-1">
-                  <span>Tempo p/ atingir a meta:</span>
-                  <span id="res-time-to-goal" class="font-mono font-bold">28 meses</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Cenário B: Dívida / Parcelamento com Juros -->
-            <div class="rounded-3xl bg-rose-500/10 border-2 border-rose-500/30 p-5 space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400">Cenário B • Dívida no Cartão</span>
-                <span class="text-lg">🔥</span>
-              </div>
-              <div>
-                <div class="text-xs text-slate-500 dark:text-slate-400">Se financiar o objetivo em <span class="sb-months-txt font-bold">24</span>x:</div>
-                <div id="res-debt-total" class="text-2xl font-extrabold font-mono text-rose-600 dark:text-rose-400">R$ 41.732,10</div>
-              </div>
-              <div class="text-xs space-y-1 pt-2 border-t border-rose-500/20 text-slate-700 dark:text-slate-300">
-                <div class="flex justify-between">
-                  <span>Parcela mensal real:</span>
-                  <span id="res-debt-pmt" class="font-mono font-semibold">R$ 1.738,84</span>
-                </div>
-                <div class="flex justify-between text-rose-600 dark:text-rose-400 font-semibold">
-                  <span>Juros pagos ao banco:</span>
-                  <span id="res-debt-interest" class="font-mono">R$ 27.732,10</span>
-                </div>
-                <div class="flex justify-between pt-1">
-                  <span>Custo final do bem:</span>
-                  <span id="res-debt-multiplier" class="font-mono font-bold">2,98x o valor!</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Box "A Reviravolta" (Insight Pedagógico) -->
-          <div id="snowball-twist-box" class="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4 flex items-start gap-3">
-            <span class="text-2xl">💡</span>
-            <div class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed" id="snowball-twist-text">
-              Calculando comparação...
-            </div>
-          </div>
-
-          <!-- Gráfico Canvas (Chart.js) -->
-          <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800">
-            <div class="flex items-center justify-between mb-3">
-              <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200">Curva Exponencial: Patrimônio Acumulado vs. Evolução da Dívida</h4>
-            </div>
-            <div class="relative h-64 sm:h-72 w-full">
-              <canvas id="snowballChart"></canvas>
-            </div>
-          </div>
-
         </div>
       </div>
     </section>
 
-    <!-- ===================================================================== -->
-    <!-- MÓDULO 2: JOGO SOBREVIVENDO AO PRIMEIRO SALÁRIO (ROXO)                -->
-    <!-- ===================================================================== -->
-    <section id="view-salary" class="hidden fade-in space-y-6">
-      <!-- Cabeçalho do Módulo -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-purple-500">Módulo 02 • Simulação de Orçamento Pessoal</span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold">Sobrevivendo ao Primeiro Salário</h2>
-        </div>
-        <div class="flex items-center gap-3">
-          <span id="sal-round-badge" class="px-4 py-1.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-300 font-mono font-bold text-sm">
-            Mês 1 de 6
-          </span>
-          <button onclick="resetSalaryGame()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
-            Reiniciar
-          </button>
-        </div>
+    <!-- ==================== HUB INICIAL: ENSINO MÉDIO ==================== -->
+    <section id="hub-hs" class="hidden animate-pop">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 mb-3">
+          TRILHA ENSINO MÉDIO • MATEMÁTICA FINANCEIRA
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">Laboratório de Decisões Econômicas</h2>
+        <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+          Experimente o impacto real dos juros compostos versus dívidas, administre um orçamento mensal sob imprevistos e gerencie uma carteira de investimentos por 10 anos.
+        </p>
       </div>
 
-      <!-- Barras de Status do Personagem -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800">
-          <div class="text-xs text-slate-500 dark:text-slate-400">Salário Mensal Líquido</div>
-          <div id="sal-income" class="text-xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">R$ 1.500,00</div>
-          <div class="text-[11px] text-purple-500 mt-1">Jovem Aprendiz / 1º Emprego</div>
-        </div>
-
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800">
-          <div class="text-xs text-slate-500 dark:text-slate-400">Reserva de Emergência</div>
-          <div id="sal-reserve" class="text-xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400 mt-1">R$ 0,00</div>
-          <div class="text-[11px] text-slate-500 mt-1">Rende 0,9% a.m. automaticamente</div>
-        </div>
-
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800">
-          <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400">
-            <span>Bem-Estar & Saúde Mental</span>
-            <span id="sal-wellbeing-txt" class="font-bold text-sky-500">75%</span>
-          </div>
-          <div class="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full mt-2 overflow-hidden">
-            <div id="sal-wellbeing-bar" class="bg-sky-500 h-full rounded-full transition-all duration-300" style="width: 75%"></div>
-          </div>
-          <div class="text-[11px] text-slate-500 mt-1.5">Equilíbrio entre lazer e contas</div>
-        </div>
-
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800">
-          <div class="text-xs text-slate-500 dark:text-slate-400">Dívidas no Cheque Especial</div>
-          <div id="sal-debt" class="text-xl font-extrabold font-mono text-rose-500 mt-1">R$ 0,00</div>
-          <div class="text-[11px] text-rose-400 mt-1">Juros de 12% a.m. se negativar!</div>
-        </div>
-      </div>
-
-      <!-- Área Interativa do Jogo (Alocação + Evento do Mês) -->
-      <div id="sal-gameplay-area" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- Distribuição do Orçamento (Esquerda) -->
-        <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 space-y-5">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <h3 class="font-bold text-base">Distribua seu Salário deste Mês</h3>
-            <span id="sal-remaining-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-              Restante: R$ 0,00
-            </span>
-          </div>
-
-          <!-- Categoria 1: Necessidades Básicas -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-2">
-            <div class="flex justify-between items-center">
-              <div>
-                <span class="font-bold text-sm">🏠 Necessidades Básicas</span>
-                <span class="block text-[11px] text-slate-500">Aluguel, luz, internet, transporte e mercado (Mínimo obrigatório: <strong id="sal-min-needs" class="text-amber-500">R$ 850</strong>)</span>
-              </div>
-              <span id="val-needs" class="font-mono font-bold text-base">R$ 850</span>
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Card 1 EM -->
+        <div onclick="openModule('hs-snowball')" class="card-green bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">❄️</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">Juros Compostos vs. Dívida</span>
             </div>
-            <input type="range" id="rng-needs" min="850" max="1500" step="25" value="850" oninput="updateSalarySliders('needs')" class="w-full slider-purple" />
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-emerald-600 transition">Efeito Bola de Neve</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Compare o patrimônio acumulado investindo mensalmente contra o custo explosivo de parcelar o mesmo objetivo no rotativo do cartão de crédito.
+            </p>
           </div>
-
-          <!-- Categoria 2: Desejos e Lazer -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-2">
-            <div class="flex justify-between items-center">
-              <div>
-                <span class="font-bold text-sm">🎮 Desejos & Lazer</span>
-                <span class="block text-[11px] text-slate-500">Streaming, lanches, passeios e roupas (Mantém seu Bem-Estar)</span>
-              </div>
-              <span id="val-wants" class="font-mono font-bold text-base text-sky-500">R$ 350</span>
-            </div>
-            <input type="range" id="rng-wants" min="0" max="1000" step="25" value="350" oninput="updateSalarySliders('wants')" class="w-full slider-sky" />
-          </div>
-
-          <!-- Categoria 3: Reserva de Emergência -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-2">
-            <div class="flex justify-between items-center">
-              <div>
-                <span class="font-bold text-sm">🛡️ Reserva de Emergência</span>
-                <span class="block text-[11px] text-slate-500">Guarda para imprevistos e rende juros todo mês (Meta ideal: 20%)</span>
-              </div>
-              <span id="val-savings" class="font-mono font-bold text-base text-emerald-500">R$ 300</span>
-            </div>
-            <input type="range" id="rng-savings" min="0" max="1000" step="25" value="300" oninput="updateSalarySliders('savings')" class="w-full slider-emerald" />
-          </div>
-
-          <!-- Indicador Visual da Regra 50-30-20 -->
-          <div class="space-y-1.5 pt-1">
-            <div class="flex justify-between text-[11px] font-mono text-slate-500">
-              <span id="pct-needs">Necessidades: 57%</span>
-              <span id="pct-wants">Desejos: 23%</span>
-              <span id="pct-savings">Reserva: 20%</span>
-            </div>
-            <div class="w-full h-3 rounded-full overflow-hidden flex bg-slate-200 dark:bg-slate-800">
-              <div id="bar-needs" class="bg-purple-500 transition-all" style="width: 57%"></div>
-              <div id="bar-wants" class="bg-sky-500 transition-all" style="width: 23%"></div>
-              <div id="bar-savings" class="bg-emerald-500 transition-all" style="width: 20%"></div>
-            </div>
-          </div>
-
-          <button id="btn-advance-month" onclick="advanceSalaryMonth()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-purple-500/25 transition">
-            Fechar Orçamento e Avançar Mês →
-          </button>
-        </div>
-
-        <!-- Feed de Eventos e Imprevistos (Direita) -->
-        <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
-          <div class="space-y-4">
-            <h3 class="font-bold text-base flex items-center gap-2">
-              <span>📰</span> Diário Financeiro & Imprevistos
-            </h3>
-            <div id="sal-event-log" class="space-y-3 max-h-[380px] overflow-y-auto pr-1">
-              <div class="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-sm text-slate-700 dark:text-slate-200">
-                <strong>Parabéns pelo primeiro emprego!</strong> Você começa com salário de R$ 1.500,00. Ajuste seus gastos ao lado e clique em avançar para ver o que acontece no 1º mês.
-              </div>
-            </div>
-          </div>
-
-          <div class="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 text-xs text-slate-600 dark:text-slate-400">
-            <strong>Dica da Regra 50-30-20:</strong> Tente manter ~50% em necessidades, ~30% em lazer/desejos e poupar pelo menos 20% para não depender de dívidas quando surgir um imprevisto!
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+            <span>Abrir Simulador</span>
+            <span>→</span>
           </div>
         </div>
-      </div>
 
-      <!-- Tela Final do Jogo do Salário (Oculta até o fim) -->
-      <div id="sal-summary-area" class="hidden rounded-3xl bg-white dark:bg-slate-900 border-2 border-purple-500 p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-5 shadow-xl">
-        <div id="sal-final-emoji" class="text-5xl">🏆</div>
-        <h3 id="sal-final-title" class="text-2xl font-extrabold">Resultado dos 6 Meses</h3>
-        <p id="sal-final-desc" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p>
-        <div class="grid grid-cols-3 gap-3 pt-2">
-          <div class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
-            <div class="text-xs text-slate-500">Reserva Final</div>
-            <div id="sal-end-reserve" class="font-mono font-bold text-emerald-500 text-base sm:text-lg">R$ 0,00</div>
+        <!-- Card 2 EM -->
+        <div onclick="openModule('hs-salary')" class="card-purple bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">💼</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">Orçamento & Regra 50-30-20</span>
+            </div>
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-purple-600 transition">Sobrevivendo ao 1º Salário</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Distribua R$ 1.500,00 entre necessidades, desejos e reserva de emergência ao longo de 6 meses enfrentando inflação, promoções e imprevistos.
+            </p>
           </div>
-          <div class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
-            <div class="text-xs text-slate-500">Dívidas</div>
-            <div id="sal-end-debt" class="font-mono font-bold text-rose-500 text-base sm:text-lg">R$ 0,00</div>
-          </div>
-          <div class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
-            <div class="text-xs text-slate-500">Bem-Estar</div>
-            <div id="sal-end-wellbeing" class="font-mono font-bold text-sky-500 text-base sm:text-lg">0%</div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-purple-600 dark:text-purple-400">
+            <span>Jogar Simulação (6 meses)</span>
+            <span>→</span>
           </div>
         </div>
-        <button onclick="resetSalaryGame()" class="px-6 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition">
-          Jogar Novamente
-        </button>
+
+        <!-- Card 3 EM -->
+        <div onclick="openModule('hs-battle')" class="card-orange bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">📈</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">Renda Fixa vs. Variável</span>
+            </div>
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-amber-600 transition">Batalha de Investimentos</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Gerencie R$ 10.000,00 durante 10 anos simulados entre Tesouro Selic, IPCA+, FIIs e Ações diante de crises, alta da Selic e inflação.
+            </p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400">
+            <span>Iniciar Batalha (10 anos)</span>
+            <span>→</span>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- ===================================================================== -->
-    <!-- MÓDULO 3: BATALHA DE INVESTIMENTOS (LARANJA)                          -->
-    <!-- ===================================================================== -->
-    <section id="view-battle" class="hidden fade-in space-y-6">
-      <!-- Cabeçalho -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-amber-500">Módulo 03 • Simulador de Carteira (10 Anos)</span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold">Batalha de Investimentos: Renda Fixa vs. Variável</h2>
+    <!-- ==================== MÓDULO KIDS 1: PRECISO OU SÓ QUERO? ==================== -->
+    <section id="mod-kids-need" class="hidden animate-pop max-w-3xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para os desafios</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold">🎯 Preciso ou Só Quero?</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Classifique cada item com inteligência financeira</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="kn-progress" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800">1 / 10</span>
+            <span id="kn-score" class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">Pontos: 0</span>
+            <span id="kn-combo" class="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">Combo: 0x</span>
+          </div>
         </div>
-        <div class="flex items-center gap-3">
-          <span id="bat-year-badge" class="px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-300 font-mono font-bold text-sm">
-            Ano 1 de 10
-          </span>
-          <button onclick="resetBattleGame()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
-            Reiniciar
+
+        <div id="kn-game-area">
+          <div class="bg-slate-50 dark:bg-slate-800/70 rounded-2xl p-6 text-center border border-slate-200 dark:border-slate-700 mb-6">
+            <div id="kn-emoji" class="text-6xl mb-3">🎧</div>
+            <h3 id="kn-title" class="text-xl font-extrabold mb-2">Fone Gamer com Luz LED</h3>
+            <p id="kn-desc" class="text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto">
+              Você já tem um fone que funciona perfeitamente, mas viu um modelo brilhante na promoção por R$ 180,00.
+            </p>
+          </div>
+
+          <div id="kn-buttons" class="grid sm:grid-cols-2 gap-4">
+            <button onclick="answerNeed('necessidade')" class="py-4 px-5 rounded-xl font-extrabold text-white bg-emerald-600 hover:bg-emerald-700 shadow transition flex items-center justify-center gap-2">
+              <span>🛡️</span> É NECESSIDADE (Preciso)
+            </button>
+            <button onclick="answerNeed('desejo')" class="py-4 px-5 rounded-xl font-extrabold text-white bg-purple-600 hover:bg-purple-700 shadow transition flex items-center justify-center gap-2">
+              <span>✨</span> É DESEJO (Só Quero)
+            </button>
+          </div>
+
+          <div id="kn-feedback" class="hidden mt-5 p-4 rounded-xl border text-sm"></div>
+          <button id="kn-next" onclick="nextNeedCard()" class="hidden mt-4 w-full py-3 rounded-xl font-bold bg-slate-900 text-white dark:bg-white dark:text-slate-900 hover:opacity-90 transition">
+            Próxima Situação →
+          </button>
+        </div>
+
+        <div id="kn-end" class="hidden text-center py-6">
+          <div class="text-6xl mb-3">🏆</div>
+          <h3 class="text-2xl font-extrabold mb-2">Missão Concluída!</h3>
+          <p id="kn-final-msg" class="text-slate-600 dark:text-slate-300 mb-6"></p>
+          <button onclick="initKidsNeed()" class="px-6 py-3 rounded-xl font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition">
+            Jogar Novamente
           </button>
         </div>
       </div>
+    </section>
 
-      <!-- Cenário Macroeconômico Atual (Notícia do Ano) -->
-      <div class="rounded-3xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-slate-900/5 border border-amber-500/30 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="space-y-1">
-          <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-bold text-[10px] uppercase">Boletim Econômico</span>
-            <span id="bat-scenario-tag" class="text-xs font-semibold text-amber-600 dark:text-amber-400">Cenário Inicial</span>
-          </div>
-          <h3 id="bat-headline" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-            "Mercado inicia década com juros moderados e expectativa de crescimento."
-          </h3>
+    <!-- ==================== MÓDULO KIDS 2: O COFRINHO TURBINADO ==================== -->
+    <section id="mod-kids-piggy" class="hidden animate-pop max-w-4xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para os desafios</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="mb-6">
+          <h2 class="text-2xl font-extrabold">🚀 O Cofrinho Turbinado</h2>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Escolha seu objetivo e veja como guardar toda semana + 5% de rendimento composto acelera sua conquista!</p>
         </div>
-        <div class="flex items-center gap-4 shrink-0">
-          <div class="px-4 py-2 rounded-2xl bg-white/80 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-center">
-            <div class="text-[10px] uppercase text-slate-500 font-bold">Taxa Selic</div>
-            <div id="bat-selic" class="font-mono font-extrabold text-base text-emerald-500">10,50% a.a.</div>
+
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+          <button onclick="selectPiggyGoal('Fone Bluetooth', 180, '🎧')" id="goal-btn-0" class="piggy-goal-btn p-4 rounded-xl border-2 border-purple-500 bg-purple-50 dark:bg-purple-950/30 text-left transition">
+            <div class="text-2xl mb-1">🎧</div>
+            <div class="font-bold text-sm">Fone Bluetooth</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Meta: R$ 180,00</div>
+          </button>
+          <button onclick="selectPiggyGoal('Tênis Esportivo', 320, '👟')" id="goal-btn-1" class="piggy-goal-btn p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-left transition">
+            <div class="text-2xl mb-1">👟</div>
+            <div class="font-bold text-sm">Tênis Esportivo</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Meta: R$ 320,00</div>
+          </button>
+          <button onclick="selectPiggyGoal('Console Portátil', 600, '🎮')" id="goal-btn-2" class="piggy-goal-btn p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-left transition">
+            <div class="text-2xl mb-1">🎮</div>
+            <div class="font-bold text-sm">Console Portátil</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Meta: R$ 600,00</div>
+          </button>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-800/60 p-5 rounded-xl border border-slate-200 dark:border-slate-700 mb-6">
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-sm font-bold">Quanto você vai guardar por semana?</label>
+            <span id="piggy-weekly-label" class="text-lg font-extrabold text-purple-600 dark:text-purple-400">R$ 20,00 / semana</span>
           </div>
-          <div class="px-4 py-2 rounded-2xl bg-white/80 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-center">
-            <div class="text-[10px] uppercase text-slate-500 font-bold">Inflação (IPCA)</div>
-            <div id="bat-ipca" class="font-mono font-extrabold text-base text-rose-500">4,50% a.a.</div>
+          <input type="range" id="piggy-weekly-input" min="5" max="60" step="5" value="20" oninput="updatePiggySim()" class="w-full accent-purple-600 cursor-pointer" />
+          <div class="flex justify-between text-xs text-slate-400 mt-1">
+            <span>R$ 5,00</span>
+            <span>R$ 30,00</span>
+            <span>R$ 60,00</span>
           </div>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-4 mb-6">
+          <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800">
+            <div class="text-xs text-slate-500 dark:text-slate-400">Tempo até a meta</div>
+            <div id="piggy-weeks-out" class="text-2xl font-extrabold text-slate-900 dark:text-white">8 semanas</div>
+          </div>
+          <div class="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/40">
+            <div class="text-xs text-blue-600 dark:text-blue-300">Saiu do seu bolso</div>
+            <div id="piggy-pocket-out" class="text-2xl font-extrabold text-blue-700 dark:text-blue-300">R$ 160,00</div>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40">
+            <div class="text-xs text-emerald-600 dark:text-emerald-300">Bônus dos Juros (5%/sem)</div>
+            <div id="piggy-bonus-out" class="text-2xl font-extrabold text-emerald-700 dark:text-emerald-300">+ R$ 30,98</div>
+          </div>
+        </div>
+
+        <div class="h-64">
+          <canvas id="piggyChart"></canvas>
         </div>
       </div>
+    </section>
 
-      <!-- Grid Principal: Alocação da Carteira + Gráfico de Evolução -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- Alocação dos 4 Ativos (Esquerda) -->
-        <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 space-y-5">
-          <div class="flex items-center justify-between">
-            <h3 class="font-bold text-base">Alocação da Carteira</h3>
-            <span id="bat-total-pct" class="px-3 py-1 rounded-full font-mono text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-              Total: 100%
-            </span>
+    <!-- ==================== MÓDULO KIDS 3: DESAFIO DO CAIXA & DESCONTO ==================== -->
+    <section id="mod-kids-shop" class="hidden animate-pop max-w-4xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para os desafios</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold">🛒 Desafio do Caixa & Desconto</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Você tem <strong>R$ 50,00</strong>. Adicione <strong>3 itens diferentes</strong> ao carrinho sem estourar o orçamento!</p>
           </div>
-
-          <!-- Ativo 1: Tesouro Selic -->
-          <div class="space-y-1.5">
-            <div class="flex justify-between text-xs sm:text-sm">
-              <span class="font-bold text-emerald-600 dark:text-emerald-400">🏦 Tesouro Selic / CDB</span>
-              <span id="lbl-asset-selic" class="font-mono font-bold">40%</span>
-            </div>
-            <input type="range" id="rng-asset-selic" min="0" max="100" step="5" value="40" oninput="updateBattleAllocation()" class="w-full slider-emerald" />
-            <p class="text-[11px] text-slate-500">Baixo risco • Alta liquidez • Acompanha a Taxa Selic.</p>
+          <div class="px-4 py-2 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 font-extrabold text-sm">
+            Orçamento: R$ 50,00
           </div>
-
-          <!-- Ativo 2: Tesouro IPCA+ -->
-          <div class="space-y-1.5">
-            <div class="flex justify-between text-xs sm:text-sm">
-              <span class="font-bold text-sky-600 dark:text-sky-400">🛡️ Tesouro IPCA+ (Inflação)</span>
-              <span id="lbl-asset-ipca" class="font-mono font-bold">30%</span>
-            </div>
-            <input type="range" id="rng-asset-ipca" min="0" max="100" step="5" value="30" oninput="updateBattleAllocation()" class="w-full slider-sky" />
-            <p class="text-[11px] text-slate-500">Risco moderado • Protege o poder de compra + juros reais.</p>
-          </div>
-
-          <!-- Ativo 3: Fundos Imobiliários (FIIs) -->
-          <div class="space-y-1.5">
-            <div class="flex justify-between text-xs sm:text-sm">
-              <span class="font-bold text-purple-600 dark:text-purple-400">🏢 Fundos Imobiliários (FIIs)</span>
-              <span id="lbl-asset-fiis" class="font-mono font-bold">15%</span>
-            </div>
-            <input type="range" id="rng-asset-fiis" min="0" max="100" step="5" value="15" oninput="updateBattleAllocation()" class="w-full slider-purple" />
-            <p class="text-[11px] text-slate-500">Risco médio • Paga aluguéis mensais isentos de IR.</p>
-          </div>
-
-          <!-- Ativo 4: Ações / Bolsa -->
-          <div class="space-y-1.5">
-            <div class="flex justify-between text-xs sm:text-sm">
-              <span class="font-bold text-amber-600 dark:text-amber-400">📈 Ações (Bolsa de Valores)</span>
-              <span id="lbl-asset-stocks" class="font-mono font-bold">15%</span>
-            </div>
-            <input type="range" id="rng-asset-stocks" min="0" max="100" step="5" value="15" oninput="updateBattleAllocation()" class="w-full slider-amber" />
-            <p class="text-[11px] text-slate-500">Alto risco • Potencial explosivo no longo prazo, mas cai em crises.</p>
-          </div>
-
-          <!-- Botões de Preset Rápido -->
-          <div class="flex gap-2 pt-1">
-            <button onclick="setBattlePreset(70, 20, 10, 0)" class="flex-1 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Conservador</button>
-            <button onclick="setBattlePreset(40, 30, 15, 15)" class="flex-1 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Equilibrado</button>
-            <button onclick="setBattlePreset(10, 15, 25, 50)" class="flex-1 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Arrojado</button>
-          </div>
-
-          <button id="btn-advance-year" onclick="advanceBattleYear()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-extrabold text-sm sm:text-base shadow-lg shadow-amber-500/20 transition">
-            Investir e Avançar 1 Ano (+R$ 500 aporte) →
-          </button>
-          <p id="bat-warning" class="hidden text-center text-xs font-bold text-rose-500">
-            A soma da carteira deve ser exatamente 100%!
-          </p>
         </div>
 
-        <!-- Resultados e Gráfico Comparativo (Direita) -->
-        <div class="lg:col-span-7 space-y-6">
-          
-          <!-- Placar Patrimonial -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border-2 border-amber-500/40">
-              <div class="text-xs text-slate-500">Sua Carteira</div>
-              <div id="bat-my-wealth" class="text-xl font-extrabold font-mono text-amber-500 mt-1">R$ 10.000,00</div>
-              <div id="bat-last-return" class="text-[11px] font-mono text-slate-400 mt-1">Capital inicial</div>
-            </div>
+        <div id="shop-products" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"></div>
 
-            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800">
-              <div class="text-xs text-slate-500">Se deixasse na Poupança</div>
-              <div id="bat-poupanca-wealth" class="text-xl font-extrabold font-mono text-slate-600 dark:text-slate-300 mt-1">R$ 10.000,00</div>
-              <div class="text-[11px] text-slate-400 mt-1">Benchmark tradicional</div>
-            </div>
-
-            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800">
-              <div class="text-xs text-slate-500">Poder de Compra (Inflação)</div>
-              <div id="bat-inflation-wealth" class="text-xl font-extrabold font-mono text-rose-500 mt-1">R$ 10.000,00</div>
-              <div class="text-[11px] text-slate-400 mt-1">Mínimo para não perder valor</div>
-            </div>
+        <div class="bg-slate-50 dark:bg-slate-800/70 p-5 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Itens selecionados: <strong id="shop-count">0</strong> / 3</div>
+            <div class="text-xl font-extrabold">Total com Descontos: <span id="shop-total" class="text-emerald-600 dark:text-emerald-400">R$ 0,00</span></div>
           </div>
-
-          <!-- Gráfico de Evolução ao longo dos 10 anos -->
-          <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800">
-            <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">Evolução Patrimonial vs. Poupança vs. Inflação</h4>
-            <div class="relative h-64 sm:h-72 w-full">
-              <canvas id="battleChart"></canvas>
-            </div>
+          <div class="flex gap-2">
+            <button onclick="resetKidsShop()" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700 hover:opacity-80">Limpar Carrinho</button>
+            <button id="shop-checkout-btn" onclick="openCheckoutChallenge()" disabled class="px-5 py-2.5 rounded-xl text-xs font-extrabold bg-amber-500 text-white disabled:opacity-40 hover:bg-amber-600 transition">
+              Ir para o Caixa →
+            </button>
           </div>
+        </div>
 
-          <!-- Resultado Final dos 10 Anos (Badge de Perfil) -->
-          <div id="bat-final-banner" class="hidden rounded-3xl bg-gradient-to-r from-amber-500/20 to-emerald-500/20 border-2 border-amber-500 p-6 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-extrabold uppercase">Fim dos 10 Anos!</span>
-              <span id="bat-profile-badge" class="font-mono font-bold text-sm text-emerald-500">Perfil: Estrategista</span>
-            </div>
-            <h4 id="bat-final-title" class="text-xl font-extrabold">Você venceu a inflação e a poupança!</h4>
-            <p id="bat-final-msg" class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed"></p>
+        <div id="shop-checkout-box" class="hidden mt-6 p-6 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800">
+          <h3 class="font-extrabold text-lg mb-1">🧾 Hora de Conferir o Troco!</h3>
+          <p id="shop-question-text" class="text-sm text-slate-700 dark:text-slate-300 mb-4"></p>
+          <div id="shop-options" class="grid sm:grid-cols-3 gap-3"></div>
+          <div id="shop-result-msg" class="hidden mt-4 p-3 rounded-xl text-sm font-bold"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== MÓDULO EM 1: EFEITO BOLA DE NEVE ==================== -->
+    <section id="mod-hs-snowball" class="hidden animate-pop max-w-5xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para os simuladores</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <h2 class="text-2xl font-extrabold mb-1">❄️ Simulador "Efeito Bola de Neve"</h2>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6">Compare o poder dos juros compostos a seu favor contra os juros rotativos do cartão de crédito.</p>
+
+        <div class="grid md:grid-cols-4 gap-4 mb-6 bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+          <div>
+            <label class="block text-xs font-bold mb-1">Objetivo (R$)</label>
+            <input type="number" id="sb-goal" value="8000" step="500" oninput="updateSnowball()" class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm font-bold" />
           </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Aporte / Parcela Mensal (R$)</label>
+            <input type="number" id="sb-monthly" value="300" step="50" oninput="updateSnowball()" class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm font-bold" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Prazo (Meses)</label>
+            <input type="number" id="sb-months" value="24" min="6" max="60" oninput="updateSnowball()" class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm font-bold" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Juros Investimento (%/mês)</label>
+            <input type="number" id="sb-rate" value="0.9" step="0.1" oninput="updateSnowball()" class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm font-bold" />
+          </div>
+        </div>
 
+        <div class="grid sm:grid-cols-2 gap-4 mb-6">
+          <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
+            <div class="text-xs font-bold text-emerald-700 dark:text-emerald-300">INVESTINDO TODO MÊS (0,9% a.m.)</div>
+            <div id="sb-invest-total" class="text-2xl font-extrabold text-emerald-700 dark:text-emerald-300 mt-1">R$ 8.015,40</div>
+            <div id="sb-invest-sub" class="text-xs text-slate-600 dark:text-slate-400 mt-1">Você ganha juros e compra à vista com desconto!</div>
+          </div>
+          <div class="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800">
+            <div class="text-xs font-bold text-rose-700 dark:text-rose-300">PARCELANDO / ROTATIVO CARTÃO (8% a.m.)</div>
+            <div id="sb-debt-total" class="text-2xl font-extrabold text-rose-700 dark:text-rose-300 mt-1">R$ 22.840,12</div>
+            <div id="sb-debt-sub" class="text-xs text-slate-600 dark:text-slate-400 mt-1">Os juros compostos trabalham contra você.</div>
+          </div>
+        </div>
+
+        <div class="h-72">
+          <canvas id="snowballChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== MÓDULO EM 2: SOBREVIVENDO AO PRIMEIRO SALÁRIO ==================== -->
+    <section id="mod-hs-salary" class="hidden animate-pop max-w-4xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para os simuladores</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold">💼 Sobrevivendo ao 1º Salário</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Aplique a Regra 50-30-20 e sobreviva a 6 meses de imprevistos reais.</p>
+          </div>
+          <div class="flex gap-2">
+            <span id="sal-month-badge" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200">Mês 1 / 6</span>
+            <span id="sal-reserve-badge" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200">Reserva: R$ 0,00</span>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-3 mb-6">
+          <div class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800">
+            <div class="text-xs text-slate-500">Salário Atual</div>
+            <div id="sal-income" class="text-xl font-extrabold">R$ 1.500,00</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800">
+            <div class="text-xs text-slate-500">Custos Fixos Obrigatórios</div>
+            <div id="sal-fixed" class="text-xl font-extrabold text-rose-600 dark:text-rose-400">R$ 750,00</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800">
+            <div class="text-xs text-slate-500">Bem-Estar / Qualidade de Vida</div>
+            <div id="sal-happy" class="text-xl font-extrabold text-amber-600 dark:text-amber-400">70%</div>
+          </div>
+        </div>
+
+        <div id="sal-controls" class="space-y-4 bg-slate-50 dark:bg-slate-800/60 p-5 rounded-xl border border-slate-200 dark:border-slate-700 mb-6">
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>🎮 Desejos & Lazer (Streaming, saídas, delivery)</span>
+              <span id="sal-wants-val">R$ 450,00</span>
+            </div>
+            <input type="range" id="sal-wants" min="0" max="1000" step="50" value="450" oninput="syncSalarySliders()" class="w-full accent-purple-600" />
+          </div>
+          <div class="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-700 text-sm">
+            <span>💰 Aporte automático na <strong>Reserva de Emergência</strong>:</span>
+            <strong id="sal-save-val" class="text-emerald-600 dark:text-emerald-400 text-lg">R$ 300,00</strong>
+          </div>
+          <button id="sal-next-btn" onclick="advanceSalaryMonth()" class="w-full py-3 rounded-xl font-extrabold bg-purple-600 hover:bg-purple-700 text-white transition">
+            Fechar Mês e Rodar Eventos →
+          </button>
+        </div>
+
+        <div id="sal-log" class="space-y-2 max-h-56 overflow-y-auto text-xs"></div>
+      </div>
+    </section>
+
+    <!-- ==================== MÓDULO EM 3: BATALHA DE INVESTIMENTOS ==================== -->
+    <section id="mod-hs-battle" class="hidden animate-pop max-w-5xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para os simuladores</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-2xl font-extrabold">📈 Batalha de Investimentos (10 Anos)</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Aloque 100% da sua carteira a cada ano diante do cenário econômico.</p>
+          </div>
+          <div class="flex gap-2">
+            <span id="bat-year" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">Ano 1 / 10</span>
+            <span id="bat-wealth" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200">Patrimônio: R$ 10.000</span>
+          </div>
+        </div>
+
+        <div id="bat-news" class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 text-sm mb-6">
+          <strong>📰 Boletim Econômico do Ano 1:</strong> Taxa Selic em 11,75% ao ano e inflação controlada. Cenário equilibrado entre Renda Fixa e Bolsa.
+        </div>
+
+        <div class="grid sm:grid-cols-4 gap-4 mb-5">
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <div class="text-xs font-bold">Tesouro Selic (%)</div>
+            <input type="number" id="alloc-selic" value="40" min="0" max="100" step="10" oninput="checkAllocSum()" class="mt-1 w-full px-2 py-1.5 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-bold text-sm" />
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <div class="text-xs font-bold">Tesouro IPCA+ (%)</div>
+            <input type="number" id="alloc-ipca" value="30" min="0" max="100" step="10" oninput="checkAllocSum()" class="mt-1 w-full px-2 py-1.5 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-bold text-sm" />
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <div class="text-xs font-bold">Fundos Imob. (%)</div>
+            <input type="number" id="alloc-fii" value="20" min="0" max="100" step="10" oninput="checkAllocSum()" class="mt-1 w-full px-2 py-1.5 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-bold text-sm" />
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <div class="text-xs font-bold">Ações / Bolsa (%)</div>
+            <input type="number" id="alloc-stocks" value="10" min="0" max="100" step="10" oninput="checkAllocSum()" class="mt-1 w-full px-2 py-1.5 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-bold text-sm" />
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <span id="alloc-sum-msg" class="text-xs font-bold text-emerald-600">Total alocado: 100% (Pronto para avançar)</span>
+          <div class="flex gap-2">
+            <button onclick="resetBattleGame()" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800">Reiniciar</button>
+            <button id="bat-next-btn" onclick="advanceBattleYear()" class="px-5 py-2.5 rounded-xl text-xs font-extrabold bg-amber-500 hover:bg-amber-600 text-white transition">
+              Simular Próximo Ano →
+            </button>
+          </div>
+        </div>
+
+        <div class="h-64">
+          <canvas id="battleChart"></canvas>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- MODAL DE GLOSSÁRIO FINANCEIRO -->
-  <div id="glossary-modal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 space-y-5 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-        <h3 class="text-lg font-extrabold flex items-center gap-2">
-          <span>📚</span> Glossário de Conceitos Financeiros
-        </h3>
-        <button onclick="toggleGlossary()" class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-bold px-3">✕</button>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
-        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 space-y-1">
-          <div class="font-bold text-emerald-500">Juros Compostos</div>
-          <p class="text-slate-600 dark:text-slate-300">São os "juros sobre juros". O rendimento de cada mês é somado ao capital inicial, gerando um crescimento exponencial ao longo do tempo.</p>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 space-y-1">
-          <div class="font-bold text-amber-500">Taxa Selic</div>
-          <p class="text-slate-600 dark:text-slate-300">É a taxa básica de juros da economia brasileira, definida pelo Banco Central. Ela guia o rendimento da Renda Fixa e o custo dos empréstimos.</p>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 space-y-1">
-          <div class="font-bold text-rose-500">Inflação (IPCA)</div>
-          <p class="text-slate-600 dark:text-slate-300">É o aumento generalizado dos preços. Se seu dinheiro rende menos que o IPCA, você perde poder de compra mesmo vendo o saldo subir.</p>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 space-y-1">
-          <div class="font-bold text-purple-500">Regra 50-30-20</div>
-          <p class="text-slate-600 dark:text-slate-300">Método de organização financeira: 50% da renda para necessidades essenciais, 30% para desejos/lazer e 20% para investimentos e reserva.</p>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 space-y-1">
-          <div class="font-bold text-sky-500">Liquidez</div>
-          <p class="text-slate-600 dark:text-slate-300">Rapidez com que você consegue transformar um investimento em dinheiro na conta sem perder valor. Ideal para reserva de emergência.</p>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 space-y-1">
-          <div class="font-bold text-indigo-500">Renda Fixa vs. Variável</div>
-          <p class="text-slate-600 dark:text-slate-300">Na Renda Fixa (Tesouro, CDB) a regra de rendimento é conhecida antes. Na Variável (Ações, FIIs) o retorno oscila conforme o mercado.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CAIXA DE MENSAGEM (SUBSTITUTO SEGURO PARA ALERT) -->
-  <div id="toast-box" class="hidden fixed bottom-5 right-5 z-50 max-w-sm bg-slate-900 text-white border border-slate-700 px-4 py-3 rounded-2xl shadow-2xl text-sm flex items-center gap-3">
-    <span id="toast-icon">ℹ️</span>
-    <span id="toast-msg">Mensagem</span>
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="border-t border-slate-200 dark:border-slate-800 py-5 text-center text-xs text-slate-500 dark:text-slate-400">
-    FinLab Virtual • Plataforma Educacional de Matemática Financeira • Uso Didático em Sala de Aula
-  </footer>
-
-  <!-- ===================================================================== -->
-  <!-- JAVASCRIPT: LÓGICA DOS 3 MÓDULOS, GRÁFICOS E INTERATIVIDADE           -->
-  <!-- ===================================================================== -->
   <script>
-    // Formatação monetária padrão brasileiro (R$ 1.234,56)
-    const fmtBRL = (val) => {
-      return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    };
+    let currentTrack = 'kids';
+    let piggyChartInstance = null;
+    let snowballChartInstance = null;
+    let battleChartInstance = null;
 
-    // Notificação Toast não bloqueante
-    function showToast(msg, icon = 'ℹ️') {
-      const box = document.getElementById('toast-box');
-      document.getElementById('toast-msg').textContent = msg;
-      document.getElementById('toast-icon').textContent = icon;
-      box.classList.remove('hidden');
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => box.classList.add('hidden'), 3500);
+    function formatBRL(v) {
+      return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    // Alternar Tema Claro/Escuro
     function toggleTheme() {
       document.documentElement.classList.toggle('dark');
-      if (snowballChartInstance) calculateSnowball();
-      if (battleChartInstance) renderBattleChart();
     }
 
-    // Alternar Modal do Glossário
-    function toggleGlossary() {
-      document.getElementById('glossary-modal').classList.toggle('hidden');
+    function setTrack(track) {
+      currentTrack = track;
+      const btnKids = document.getElementById('btn-track-kids');
+      const btnHs = document.getElementById('btn-track-hs');
+      if (track === 'kids') {
+        btnKids.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all tab-active-kids';
+        btnHs.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-300';
+      } else {
+        btnHs.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all tab-active-hs';
+        btnKids.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-300';
+      }
+      goHome();
     }
 
-    // Navegação entre Hub e Módulos
+    function hideAllSections() {
+      ['hub-kids', 'hub-hs', 'mod-kids-need', 'mod-kids-piggy', 'mod-kids-shop', 'mod-hs-snowball', 'mod-hs-salary', 'mod-hs-battle']
+        .forEach(id => document.getElementById(id).classList.add('hidden'));
+    }
+
     function goHome() {
-      document.getElementById('view-hub').classList.remove('hidden');
-      document.getElementById('view-snowball').classList.add('hidden');
-      document.getElementById('view-salary').classList.add('hidden');
-      document.getElementById('view-battle').classList.add('hidden');
-      document.getElementById('btn-back-hub').classList.add('hidden');
-      document.getElementById('btn-back-hub').classList.remove('flex');
+      hideAllSections();
+      document.getElementById(currentTrack === 'kids' ? 'hub-kids' : 'hub-hs').classList.remove('hidden');
     }
 
     function openModule(mod) {
-      document.getElementById('view-hub').classList.add('hidden');
-      document.getElementById('view-snowball').classList.add('hidden');
-      document.getElementById('view-salary').classList.add('hidden');
-      document.getElementById('view-battle').classList.add('hidden');
-
-      const btnBack = document.getElementById('btn-back-hub');
-      btnBack.classList.remove('hidden');
-      btnBack.classList.add('flex');
-
-      if (mod === 'snowball') {
-        document.getElementById('view-snowball').classList.remove('hidden');
-        calculateSnowball();
-      } else if (mod === 'salary') {
-        document.getElementById('view-salary').classList.remove('hidden');
-        updateSalarySliders('init');
-      } else if (mod === 'battle') {
-        document.getElementById('view-battle').classList.remove('hidden');
-        renderBattleChart();
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      hideAllSections();
+      document.getElementById('mod-' + mod).classList.remove('hidden');
+      if (mod === 'kids-need') initKidsNeed();
+      if (mod === 'kids-piggy') updatePiggySim();
+      if (mod === 'kids-shop') initKidsShop();
+      if (mod === 'hs-snowball') updateSnowball();
+      if (mod === 'hs-salary') initSalaryGame();
+      if (mod === 'hs-battle') resetBattleGame();
     }
 
-    // =========================================================================
-    // MÓDULO 1: SIMULADOR EFEITO BOLA DE NEVE (JUROS COMPOSTOS VS DÍVIDA)
-    // =========================================================================
-    let currentGoalValue = 14000;
-    let currentGoalName = 'Moto 0km';
-    let snowballChartInstance = null;
+    /* ==================== LÓGICA KIDS 1: PRECISO OU SÓ QUERO ==================== */
+    const needQuestions = [
+      { emoji: '📚', title: 'Cadernos e Canetas para o Semestre', desc: 'As aulas vão começar e você precisa de material básico para estudar.', type: 'necessidade', tip: 'Material escolar essencial faz parte da sua educação e é uma necessidade.' },
+      { emoji: '🎮', title: 'Skin Rara no Jogo Online', desc: 'Custa R$ 45,00, não muda nada na jogabilidade, mas todos os amigos compraram.', type: 'desejo', tip: 'Itens cosméticos em jogos são desejos — podem esperar ou entrar na cota de lazer!' },
+      { emoji: '👟', title: 'Tênis Novo porque o Atual Furou', desc: 'Seu único tênis de ir para a escola rasgou na sola e entra água quando chove.', type: 'necessidade', tip: 'Substituir um calçado danificado de uso diário é uma necessidade básica.' },
+      { emoji: '🧋', title: 'Milk-shake Especial Todo Dia na Saída', desc: 'Você já almoça em casa, mas quer comprar um milk-shake de R$ 18,00 todos os dias.', type: 'desejo', tip: 'Pequenos gastos diários por impulso somam R$ 360,00 no mês! É um desejo.' },
+      { emoji: '💊', title: 'Remédio Receitado pelo Médico', desc: 'Você pegou uma infecção de garganta e precisa comprar o antibiótico.', type: 'necessidade', tip: 'Saúde e medicamentos sempre têm prioridade máxima no orçamento.' },
+      { emoji: '🎧', title: 'Segundo Fone Só pela Cor Nova', desc: 'Seu fone atual funciona bem, mas lançou uma edição roxa idêntica.', type: 'desejo', tip: 'Trocar algo que funciona apenas pela estética é desejo de consumo.' },
+      { emoji: '🚌', title: 'Crédito no Cartão de Transporte', desc: 'Passagem de ônibus para ir à escola e ao curso técnico.', type: 'necessidade', tip: 'Transporte para estudo ou trabalho é custo essencial (necessidade).' },
+      { emoji: '📱', title: 'Capinha de Celular Colecionável', desc: 'Você já tem uma capinha protetora, mas viu outra de personagem na vitrine.', type: 'desejo', tip: 'Como você já possui proteção no aparelho, a segunda capinha é desejo.' },
+      { emoji: '🥗', title: 'Lanche Saudável na Cantina', desc: 'Você ficou na escola o dia inteiro para atividade extra e precisa se alimentar.', type: 'necessidade', tip: 'Alimentação durante o período fora de casa é necessidade.' },
+      { emoji: '🎟️', title: 'Ingresso VIP com Brinde Extra', desc: 'O ingresso comum cabe no orçamento, mas o VIP custa o dobro por causa de um copo.', type: 'desejo', tip: 'O upgrade VIP é um desejo; escolher a opção padrão economiza metade do dinheiro!' }
+    ];
+    let knIndex = 0, knScore = 0, knCombo = 0;
 
-    function selectGoal(value, name, btnEl) {
-      currentGoalValue = value;
-      currentGoalName = name;
-      document.getElementById('custom-goal-input').value = value;
+    function initKidsNeed() {
+      knIndex = 0; knScore = 0; knCombo = 0;
+      document.getElementById('kn-game-area').classList.remove('hidden');
+      document.getElementById('kn-end').classList.add('hidden');
+      renderNeedCard();
+    }
 
-      document.querySelectorAll('.goal-btn').forEach(b => {
-        b.classList.remove('border-emerald-500', 'bg-emerald-500/10');
-        b.classList.add('border-slate-200', 'dark:border-slate-800');
+    function renderNeedCard() {
+      const q = needQuestions[knIndex];
+      document.getElementById('kn-progress').textContent = `${knIndex + 1} / ${needQuestions.length}`;
+      document.getElementById('kn-score').textContent = `Pontos: ${knScore}`;
+      document.getElementById('kn-combo').textContent = `Combo: ${knCombo}x`;
+      document.getElementById('kn-emoji').textContent = q.emoji;
+      document.getElementById('kn-title').textContent = q.title;
+      document.getElementById('kn-desc').textContent = q.desc;
+      document.getElementById('kn-feedback').classList.add('hidden');
+      document.getElementById('kn-next').classList.add('hidden');
+      document.getElementById('kn-buttons').classList.remove('pointer-events-none', 'opacity-50');
+    }
+
+    function answerNeed(choice) {
+      const q = needQuestions[knIndex];
+      const fb = document.getElementById('kn-feedback');
+      document.getElementById('kn-buttons').classList.add('pointer-events-none', 'opacity-50');
+      fb.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-300', 'text-emerald-900', 'bg-rose-50', 'border-rose-300', 'text-rose-900');
+
+      if (choice === q.type) {
+        knCombo++;
+        knScore += 10 + (knCombo * 2);
+        fb.classList.add('bg-emerald-50', 'border-emerald-300', 'text-emerald-900', 'dark:bg-emerald-950/50', 'dark:text-emerald-200');
+        fb.innerHTML = `✅ <strong>Mandou bem!</strong> ${q.tip}`;
+      } else {
+        knCombo = 0;
+        fb.classList.add('bg-rose-50', 'border-rose-300', 'text-rose-900', 'dark:bg-rose-950/50', 'dark:text-rose-200');
+        fb.innerHTML = `💡 <strong>Quase lá!</strong> ${q.tip}`;
+      }
+      document.getElementById('kn-score').textContent = `Pontos: ${knScore}`;
+      document.getElementById('kn-combo').textContent = `Combo: ${knCombo}x`;
+      document.getElementById('kn-next').classList.remove('hidden');
+    }
+
+    function nextNeedCard() {
+      knIndex++;
+      if (knIndex < needQuestions.length) renderNeedCard();
+      else {
+        document.getElementById('kn-game-area').classList.add('hidden');
+        document.getElementById('kn-end').classList.remove('hidden');
+        document.getElementById('kn-final-msg').textContent = `Você fechou o desafio com ${knScore} pontos! Saber separar "preciso" de "quero" é o primeiro passo para nunca ficar sem dinheiro.`;
+      }
+    }
+
+    /* ==================== LÓGICA KIDS 2: COFRINHO TURBINADO ==================== */
+    let piggyGoal = { name: 'Fone Bluetooth', price: 180 };
+
+    function selectPiggyGoal(name, price, icon) {
+      piggyGoal = { name, price };
+      document.querySelectorAll('.piggy-goal-btn').forEach((btn, idx) => {
+        btn.className = 'piggy-goal-btn p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-left transition';
       });
-      if (btnEl) {
-        btnEl.classList.remove('border-slate-200', 'dark:border-slate-800');
-        btnEl.classList.add('border-emerald-500', 'bg-emerald-500/10');
-      }
-      calculateSnowball();
+      const idxMap = { 'Fone Bluetooth': 0, 'Tênis Esportivo': 1, 'Console Portátil': 2 };
+      const active = document.getElementById('goal-btn-' + idxMap[name]);
+      if (active) active.className = 'piggy-goal-btn p-4 rounded-xl border-2 border-purple-500 bg-purple-50 dark:bg-purple-950/30 text-left transition';
+      updatePiggySim();
     }
 
-    function updateCustomGoal(val) {
-      const parsed = parseFloat(val);
-      if (!isNaN(parsed) && parsed >= 100) {
-        currentGoalValue = parsed;
-        currentGoalName = 'Objetivo Personalizado';
-        document.querySelectorAll('.goal-btn').forEach(b => {
-          b.classList.remove('border-emerald-500', 'bg-emerald-500/10');
-          b.classList.add('border-slate-200', 'dark:border-slate-800');
-        });
-        calculateSnowball();
+    function updatePiggySim() {
+      const weekly = Number(document.getElementById('piggy-weekly-input').value);
+      document.getElementById('piggy-weekly-label').textContent = `${formatBRL(weekly)} / semana`;
+
+      let total = 0, pocket = 0, weeks = 0;
+      const labels = ['Início'], pocketSeries = [0], totalSeries = [0];
+
+      while (total < piggyGoal.price && weeks < 52) {
+        weeks++;
+        pocket += weekly;
+        total = (total + weekly) * 1.05; // 5% rendimento semanal didático
+        labels.push(`Sem ${weeks}`);
+        pocketSeries.push(Number(pocket.toFixed(2)));
+        totalSeries.push(Number(total.toFixed(2)));
+      }
+
+      const bonus = Math.max(0, total - pocket);
+      document.getElementById('piggy-weeks-out').textContent = `${weeks} semanas`;
+      document.getElementById('piggy-pocket-out').textContent = formatBRL(pocket);
+      document.getElementById('piggy-bonus-out').textContent = `+ ${formatBRL(bonus)}`;
+
+      const ctx = document.getElementById('piggyChart').getContext('2d');
+      if (piggyChartInstance) piggyChartInstance.destroy();
+      piggyChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            { label: 'Total no Cofrinho Turbinado (com 5%/sem)', data: totalSeries, borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.15)', fill: true, tension: 0.3 },
+            { label: 'Só o que saiu do seu bolso', data: pocketSeries, borderColor: '#3b82f6', borderDash: [5, 5], tension: 0.3 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    /* ==================== LÓGICA KIDS 3: DESAFIO DO CAIXA & DESCONTO ==================== */
+    const shopCatalog = [
+      { id: 1, name: 'Livro de Aventura', price: 20, discount: 10, emoji: '📘' },
+      { id: 2, name: 'Garrafa Térmica', price: 25, discount: 20, emoji: '🥤' },
+      { id: 3, name: 'Kit Canetas Coloridas', price: 15, discount: 0, emoji: '🖊️' },
+      { id: 4, name: 'Boné Esportivo', price: 30, discount: 20, emoji: '🧢' },
+      { id: 5, name: 'Caderno Inteligente', price: 20, discount: 10, emoji: '📓' },
+      { id: 6, name: 'Lanche Natural + Suco', price: 12, discount: 0, emoji: '🥪' }
+    ];
+    let cartIds = [];
+
+    function initKidsShop() {
+      cartIds = [];
+      document.getElementById('shop-checkout-box').classList.add('hidden');
+      renderShop();
+    }
+
+    function renderShop() {
+      const container = document.getElementById('shop-products');
+      container.innerHTML = shopCatalog.map(item => {
+        const finalPrice = item.price * (1 - item.discount / 100);
+        const selected = cartIds.includes(item.id);
+        return `
+          <div onclick="toggleCartItem(${item.id})" class="p-4 rounded-xl border-2 cursor-pointer transition ${selected ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/30' : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40'}">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-3xl">${item.emoji}</span>
+              ${item.discount > 0 ? `<span class="text-xs font-extrabold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">-${item.discount}% OFF</span>` : `<span class="text-xs px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700">Preço fixo</span>`}
+            </div>
+            <div class="font-bold text-sm">${item.name}</div>
+            <div class="mt-1 text-xs text-slate-500">
+              ${item.discount > 0 ? `<span class="line-through mr-1">${formatBRL(item.price)}</span>` : ''}
+              <strong class="text-sm text-slate-900 dark:text-white">${formatBRL(finalPrice)}</strong>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const total = getCartTotal();
+      document.getElementById('shop-count').textContent = cartIds.length;
+      document.getElementById('shop-total').textContent = formatBRL(total);
+      const btn = document.getElementById('shop-checkout-btn');
+      btn.disabled = !(cartIds.length === 3 && total <= 50);
+    }
+
+    function toggleCartItem(id) {
+      if (cartIds.includes(id)) cartIds = cartIds.filter(x => x !== id);
+      else if (cartIds.length < 3) cartIds.push(id);
+      document.getElementById('shop-checkout-box').classList.add('hidden');
+      renderShop();
+    }
+
+    function resetKidsShop() {
+      cartIds = [];
+      document.getElementById('shop-checkout-box').classList.add('hidden');
+      renderShop();
+    }
+
+    function getCartTotal() {
+      return cartIds.reduce((acc, id) => {
+        const it = shopCatalog.find(x => x.id === id);
+        return acc + it.price * (1 - it.discount / 100);
+      }, 0);
+    }
+
+    function openCheckoutChallenge() {
+      const total = getCartTotal();
+      const change = Number((50 - total).toFixed(2));
+      const box = document.getElementById('shop-checkout-box');
+      const res = document.getElementById('shop-result-msg');
+      res.classList.add('hidden');
+      box.classList.remove('hidden');
+
+      document.getElementById('shop-question-text').innerHTML =
+        `Sua compra deu <strong>${formatBRL(total)}</strong> e você pagou com uma nota de <strong>R$ 50,00</strong>. Quanto você deve receber de troco?`;
+
+      const wrong1 = Number((change + 2).toFixed(2));
+      const wrong2 = Number(Math.max(0.5, change - 1.5).toFixed(2));
+      const opts = [change, wrong1, wrong2].sort(() => Math.random() - 0.5);
+
+      document.getElementById('shop-options').innerHTML = opts.map(val => `
+        <button onclick="verifyChange(${val}, ${change})" class="py-3 px-4 rounded-xl font-extrabold bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900/40 transition">
+          ${formatBRL(val)}
+        </button>
+      `).join('');
+    }
+
+    function verifyChange(chosen, exact) {
+      const res = document.getElementById('shop-result-msg');
+      res.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+      if (Math.abs(chosen - exact) < 0.01) {
+        res.classList.add('bg-emerald-100', 'text-emerald-900');
+        res.textContent = `🎉 Exato! R$ 50,00 - ${formatBRL(50 - exact)} = ${formatBRL(exact)} de troco. Você dominou descontos e troco!`;
+      } else {
+        res.classList.add('bg-rose-100', 'text-rose-900');
+        res.textContent = `❌ Ops! O troco certo é ${formatBRL(exact)}. Tente clicar na opção correta!`;
       }
     }
 
-    function calculateSnowball() {
-      const pmt = parseFloat(document.getElementById('rng-monthly').value);
-      const months = parseInt(document.getElementById('rng-months').value);
-      const investRate = parseFloat(document.getElementById('rng-invest-rate').value) / 100;
-      const debtRate = parseFloat(document.getElementById('rng-debt-rate').value) / 100;
+    /* ==================== LÓGICA EM 1: EFEITO BOLA DE NEVE ==================== */
+    function updateSnowball() {
+      const goal = Number(document.getElementById('sb-goal').value) || 8000;
+      const monthly = Number(document.getElementById('sb-monthly').value) || 300;
+      const months = Math.min(60, Math.max(6, Number(document.getElementById('sb-months').value) || 24));
+      const rate = (Number(document.getElementById('sb-rate').value) || 0.9) / 100;
+      const debtRate = 0.08; // 8% ao mês rotativo cartão
 
-      // Atualiza labels
-      document.getElementById('lbl-monthly').textContent = fmtBRL(pmt);
-      document.getElementById('lbl-months').textContent = `${months} meses`;
-      document.getElementById('lbl-invest-rate').textContent = `${(investRate * 100).toFixed(2).replace('.', ',')}% a.m.`;
-      document.getElementById('lbl-debt-rate').textContent = `${(debtRate * 100).toFixed(2).replace('.', ',')}% a.m.`;
-      document.querySelectorAll('.sb-months-txt').forEach(el => el.textContent = months);
-
-      // Cálculo Cenário A: Investindo mensalmente (Série Uniforme de Pagamentos)
-      // M = PMT * [((1 + i)^t - 1) / i]
-      const investTotal = pmt * ((Math.pow(1 + investRate, months) - 1) / investRate);
-      const investPrincipal = pmt * months;
-      const investInterest = investTotal - investPrincipal;
-
-      // Quantos meses leva para atingir o valor da meta poupando pmt/mês?
-      // t = ln( (Meta * i / PMT) + 1 ) / ln(1 + i)
-      const monthsToGoal = Math.ceil(Math.log((currentGoalValue * investRate / pmt) + 1) / Math.log(1 + investRate));
-
-      // Cálculo Cenário B: Financiando o valor do objetivo no cartão/crédito (Tabela Price)
-      // Parcela real necessária = PV * [ i(1+i)^t / ((1+i)^t - 1) ]
-      const factor = Math.pow(1 + debtRate, months);
-      const realDebtPmt = currentGoalValue * ((debtRate * factor) / (factor - 1));
-      const debtTotalPaid = realDebtPmt * months;
-      const debtInterestPaid = debtTotalPaid - currentGoalValue;
-      const multiplier = (debtTotalPaid / currentGoalValue).toFixed(2).replace('.', ',');
-
-      // Atualiza DOM
-      document.getElementById('res-invest-total').textContent = fmtBRL(investTotal);
-      document.getElementById('res-invest-principal').textContent = fmtBRL(investPrincipal);
-      document.getElementById('res-invest-interest').textContent = `+ ${fmtBRL(investInterest)}`;
-      document.getElementById('res-time-to-goal').textContent = `${monthsToGoal} meses`;
-
-      document.getElementById('res-debt-total').textContent = fmtBRL(debtTotalPaid);
-      document.getElementById('res-debt-pmt').textContent = fmtBRL(realDebtPmt);
-      document.getElementById('res-debt-interest').textContent = fmtBRL(debtInterestPaid);
-      document.getElementById('res-debt-multiplier').textContent = `${multiplier}x o valor!`;
-
-      // Reviravolta Pedagógica
-      const diff = debtTotalPaid - currentGoalValue;
-      document.getElementById('snowball-twist-text').innerHTML = `
-        <strong>A Reviravolta Matemática:</strong> Se você parcelar <em>${currentGoalName}</em> (${fmtBRL(currentGoalValue)}) a ${(debtRate * 100).toFixed(1).replace('.', ',')}% a.m., pagará <strong>${fmtBRL(diff)} só de juros</strong> — dinheiro suficiente para comprar quase ${Math.floor(debtTotalPaid / currentGoalValue)} itens iguais! Já investindo ${fmtBRL(pmt)}/mês, você compra à vista em <strong>${monthsToGoal} meses</strong> e ainda ganha desconto na loja.
-      `;
-
-      // Prepara séries para o Gráfico
-      const labels = [];
-      const investSeries = [];
-      const debtSnowballSeries = [];
-
-      for (let m = 0; m <= months; m++) {
+      const labels = [], investData = [], debtData = [];
+      let inv = 0;
+      for (let m = 1; m <= months; m++) {
+        inv = (inv + monthly) * (1 + rate);
+        const debtVal = goal * Math.pow(1 + debtRate, m);
         labels.push(`Mês ${m}`);
-        const invVal = m === 0 ? 0 : pmt * ((Math.pow(1 + investRate, m) - 1) / investRate);
-        // Mostra quanto a dívida acumularia se não fosse amortizada ou o total acumulado pago
-        const debtVal = currentGoalValue * Math.pow(1 + debtRate, m);
-        investSeries.push(invVal.toFixed(2));
-        debtSnowballSeries.push(debtVal.toFixed(2));
+        investData.push(Number(inv.toFixed(2)));
+        debtData.push(Number(debtVal.toFixed(2)));
       }
 
-      renderSnowballChart(labels, investSeries, debtSnowballSeries);
-    }
+      document.getElementById('sb-invest-total').textContent = formatBRL(inv);
+      document.getElementById('sb-debt-total').textContent = formatBRL(debtData[debtData.length - 1]);
 
-    function renderSnowballChart(labels, investData, debtData) {
       const ctx = document.getElementById('snowballChart').getContext('2d');
-      const isDark = document.documentElement.classList.contains('dark');
-      const gridColor = isDark ? 'rgba(148, 163, 184, 0.1)' : 'rgba(15, 23, 42, 0.08)';
-      const textColor = isDark ? '#94a3b8' : '#475569';
-
       if (snowballChartInstance) snowballChartInstance.destroy();
-
       snowballChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
           labels,
           datasets: [
-            {
-              label: 'Patrimônio Investindo (Aportes + Juros)',
-              data: investData,
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.15)',
-              borderWidth: 3,
-              fill: true,
-              tension: 0.3,
-              pointRadius: 2
-            },
-            {
-              label: 'Bola de Neve da Dívida (Sem Amortizar)',
-              data: debtData,
-              borderColor: '#f43f5e',
-              backgroundColor: 'rgba(244, 63, 94, 0.1)',
-              borderWidth: 3,
-              borderDash: [5, 5],
-              fill: false,
-              tension: 0.3,
-              pointRadius: 2
-            }
+            { label: 'Investindo todo mês (Juros a favor)', data: investData, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.12)', fill: true, tension: 0.3 },
+            { label: 'Dívida no Rotativo (Juros contra - 8% a.m.)', data: debtData, borderColor: '#f43f5e', backgroundColor: 'rgba(244,63,94,0.10)', fill: true, tension: 0.3 }
           ]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: { labels: { color: textColor, font: { family: 'Inter', size: 12 } } },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => `${ctx.dataset.label}: ${fmtBRL(parseFloat(ctx.raw))}`
-              }
-            }
-          },
-          scales: {
-            x: { grid: { color: gridColor }, ticks: { color: textColor, maxTicksLimit: 8 } },
-            y: {
-              grid: { color: gridColor },
-              ticks: {
-                color: textColor,
-                callback: (v) => 'R$ ' + v.toLocaleString('pt-BR')
-              }
-            }
-          }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
       });
     }
 
-    // =========================================================================
-    // MÓDULO 2: JOGO SOBREVIVENDO AO PRIMEIRO SALÁRIO
-    // =========================================================================
-    let salState = {
-      month: 1,
-      maxMonths: 6,
-      income: 1500,
-      minNeeds: 850,
-      reserve: 0,
-      wellbeing: 75,
-      debt: 0,
-      usedEvents: []
-    };
-
-    const salaryEventsPool = [
-      {
-        title: "📱 Tela do celular trincou!",
-        desc: "Você derrubou o aparelho no ônibus e precisou trocar a tela para continuar trabalhando/estudando.",
-        cost: 350,
-        wellbeingDelta: -5,
-        type: "expense"
-      },
-      {
-        title: "📈 Inflação nos Alimentos e Energia",
-        desc: "A conta de luz veio com bandeira vermelha e o mercado subiu. Suas necessidades básicas aumentaram em R$ 100 permanentes!",
-        cost: 0,
-        needsIncrease: 100,
-        wellbeingDelta: -5,
-        type: "inflation"
-      },
-      {
-        title: "💼 Bico / Hora Extra no Fim de Semana",
-        desc: "Você ajudou na organização de um evento local e recebeu um dinheiro extra!",
-        bonus: 250,
-        wellbeingDelta: -5,
-        type: "bonus"
-      },
-      {
-        title: "🦷 Dor de Dente e Farmácia",
-        desc: "Emergência odontológica e compra de antibióticos/analgésicos.",
-        cost: 220,
-        wellbeingDelta: -8,
-        type: "expense"
-      },
-      {
-        title: "🚀 Reconhecimento no Trabalho!",
-        desc: "Seu chefe elogiou sua dedicação e você recebeu um aumento salarial de R$ 200,00!",
-        salaryIncrease: 200,
-        wellbeingDelta: +10,
-        type: "raise"
-      },
-      {
-        title: "👟 Tênis Rasgou no Caminho",
-        desc: "Seu único tênis do dia a dia abriu o solado e você precisou comprar um novo.",
-        cost: 240,
-        wellbeingDelta: 0,
-        type: "expense"
-      },
-      {
-        title: "🎉 Aniversário de Melhor Amigo(a)",
-        desc: "Presente + comemoração com a galera. Faz bem para a mente, mas pesa no bolso!",
-        cost: 180,
-        wellbeingDelta: +10,
-        type: "expense"
-      }
+    /* ==================== LÓGICA EM 2: SOBREVIVENDO AO 1º SALÁRIO ==================== */
+    let salState = {};
+    const salaryEvents = [
+      { text: '📈 Inflação nos alimentos! Custos fixos subiram R$ 80,00.', fixedDelta: 80, reserveDelta: 0, incomeDelta: 0, happyDelta: -5 },
+      { text: '📱 Tela do celular trincou! Conserto custou R$ 250,00 da sua reserva.', fixedDelta: 0, reserveDelta: -250, incomeDelta: 0, happyDelta: -10 },
+      { text: '🎉 Hora extra e bônus de desempenho! Você recebeu +R$ 200,00 este mês.', fixedDelta: 0, reserveDelta: 0, incomeDelta: 200, happyDelta: 10 },
+      { text: '⚡ Bandeira vermelha na conta de luz: +R$ 60,00 nos custos fixos.', fixedDelta: 60, reserveDelta: 0, incomeDelta: 0, happyDelta: -5 },
+      { text: '🚀 Promoção no trabalho! Seu salário base aumentou R$ 250,00!', fixedDelta: 0, reserveDelta: 0, incomeDelta: 250, happyDelta: 15 },
+      { text: '🩺 Consulta odontológica de emergência: -R$ 180,00 da reserva.', fixedDelta: 0, reserveDelta: -180, incomeDelta: 0, happyDelta: -5 }
     ];
 
-    function updateSalarySliders(changed) {
-      const rNeeds = document.getElementById('rng-needs');
-      const rWants = document.getElementById('rng-wants');
-      const rSavings = document.getElementById('rng-savings');
+    function initSalaryGame() {
+      salState = { month: 1, income: 1500, fixed: 750, reserve: 0, happy: 70, over: false };
+      document.getElementById('sal-log').innerHTML = '';
+      document.getElementById('sal-next-btn').disabled = false;
+      document.getElementById('sal-next-btn').textContent = 'Fechar Mês e Rodar Eventos →';
+      renderSalaryUI();
+    }
 
-      rNeeds.min = salState.minNeeds;
-      rNeeds.max = salState.income;
-      rWants.max = salState.income;
-      rSavings.max = salState.income;
+    function syncSalarySliders() {
+      const maxWants = Math.max(0, salState.income - salState.fixed);
+      const wantsSlider = document.getElementById('sal-wants');
+      wantsSlider.max = maxWants;
+      if (Number(wantsSlider.value) > maxWants) wantsSlider.value = maxWants;
+      const wants = Number(wantsSlider.value);
+      const save = Math.max(0, salState.income - salState.fixed - wants);
+      document.getElementById('sal-wants-val').textContent = formatBRL(wants);
+      document.getElementById('sal-save-val').textContent = formatBRL(save);
+    }
 
-      let needs = Math.max(salState.minNeeds, parseInt(rNeeds.value));
-      let wants = parseInt(rWants.value);
-      let savings = parseInt(rSavings.value);
-
-      // Ajusta automaticamente para não ultrapassar o salário total
-      if (needs + wants + savings > salState.income) {
-        let excess = (needs + wants + savings) - salState.income;
-        if (changed === 'needs') {
-          const cutWants = Math.min(wants, excess);
-          wants -= cutWants;
-          excess -= cutWants;
-          savings = Math.max(0, savings - excess);
-        } else if (changed === 'wants') {
-          const cutSavings = Math.min(savings, excess);
-          savings -= cutSavings;
-          excess -= cutSavings;
-          wants = Math.max(0, wants - excess);
-        } else {
-          const cutWants = Math.min(wants, excess);
-          wants -= cutWants;
-          excess -= cutWants;
-          savings = Math.max(0, savings - excess);
-        }
-      }
-
-      rNeeds.value = needs;
-      rWants.value = wants;
-      rSavings.value = savings;
-
-      const remaining = salState.income - (needs + wants + savings);
-
-      document.getElementById('sal-min-needs').textContent = `R$ ${salState.minNeeds}`;
-      document.getElementById('val-needs').textContent = `R$ ${needs}`;
-      document.getElementById('val-wants').textContent = `R$ ${wants}`;
-      document.getElementById('val-savings').textContent = `R$ ${savings}`;
-
-      const remBadge = document.getElementById('sal-remaining-badge');
-      remBadge.textContent = remaining > 0 ? `Não alocado: R$ ${remaining}` : 'Orçamento 100% Alocado ✓';
-
-      // Percentuais 50-30-20
-      const pN = Math.round((needs / salState.income) * 100);
-      const pW = Math.round((wants / salState.income) * 100);
-      const pS = Math.round((savings / salState.income) * 100);
-
-      document.getElementById('pct-needs').textContent = `Necessidades: ${pN}%`;
-      document.getElementById('pct-wants').textContent = `Desejos: ${pW}%`;
-      document.getElementById('pct-savings').textContent = `Reserva: ${pS}%`;
-
-      document.getElementById('bar-needs').style.width = `${pN}%`;
-      document.getElementById('bar-wants').style.width = `${pW}%`;
-      document.getElementById('bar-savings').style.width = `${pS}%`;
+    function renderSalaryUI() {
+      document.getElementById('sal-month-badge').textContent = `Mês ${Math.min(6, salState.month)} / 6`;
+      document.getElementById('sal-reserve-badge').textContent = `Reserva: ${formatBRL(salState.reserve)}`;
+      document.getElementById('sal-income').textContent = formatBRL(salState.income);
+      document.getElementById('sal-fixed').textContent = formatBRL(salState.fixed);
+      document.getElementById('sal-happy').textContent = `${salState.happy}%`;
+      syncSalarySliders();
     }
 
     function advanceSalaryMonth() {
-      if (salState.month > salState.maxMonths) return;
+      if (salState.over) { initSalaryGame(); return; }
+      const wants = Number(document.getElementById('sal-wants').value);
+      const saved = Math.max(0, salState.income - salState.fixed - wants);
+      salState.reserve = (salState.reserve + saved) * 1.01; // 1% rendimento mensal na reserva
 
-      const needs = parseInt(document.getElementById('rng-needs').value);
-      const wants = parseInt(document.getElementById('rng-wants').value);
-      const savings = parseInt(document.getElementById('rng-savings').value);
-      const unallocated = salState.income - (needs + wants + savings);
+      if (wants < 200) salState.happy = Math.max(10, salState.happy - 10);
+      else if (wants >= 400) salState.happy = Math.min(100, salState.happy + 5);
 
-      // 1. Aplica juros sobre dívida existente (12% a.m.) e rendimento na reserva (0,9% a.m.)
-      if (salState.debt > 0) {
-        salState.debt = salState.debt * 1.12;
-      }
-      salState.reserve = (salState.reserve * 1.009) + savings + unallocated;
+      const ev = salaryEvents[(salState.month - 1) % salaryEvents.length];
+      salState.fixed += ev.fixedDelta;
+      salState.reserve += ev.reserveDelta;
+      salState.income += ev.incomeDelta;
+      salState.happy = Math.min(100, Math.max(0, salState.happy + ev.happyDelta));
 
-      // Se tinha dívida e agora tem reserva, abate a dívida automaticamente
-      if (salState.debt > 0 && salState.reserve > 0) {
-        const pay = Math.min(salState.debt, salState.reserve);
-        salState.debt -= pay;
-        salState.reserve -= pay;
-      }
+      const log = document.getElementById('sal-log');
+      const alertClass = salState.reserve < 0 ? 'bg-rose-100 text-rose-900 border-rose-300' : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700';
+      log.innerHTML = `<div class="p-3 rounded-xl border ${alertClass}"><strong>Mês ${salState.month}:</strong> Guardou ${formatBRL(saved)}. ${ev.text} (Saldo Reserva: <strong>${formatBRL(salState.reserve)}</strong>)</div>` + log.innerHTML;
 
-      // 2. Impacto do Lazer no Bem-Estar
-      const wantsRatio = wants / salState.income;
-      if (wantsRatio >= 0.20) {
-        salState.wellbeing = Math.min(100, salState.wellbeing + 6);
-      } else if (wantsRatio < 0.10) {
-        salState.wellbeing = Math.max(0, salState.wellbeing - 10);
-      }
-
-      // 3. Sorteia evento aleatório do mês
-      let available = salaryEventsPool.filter((_, idx) => !salState.usedEvents.includes(idx));
-      if (available.length === 0) {
-        salState.usedEvents = [];
-        available = salaryEventsPool;
-      }
-      const randIdx = Math.floor(Math.random() * available.length);
-      const ev = available[randIdx];
-      salState.usedEvents.push(salaryEventsPool.indexOf(ev));
-
-      let eventOutcomeText = ev.desc;
-
-      if (ev.cost) {
-        if (salState.reserve >= ev.cost) {
-          salState.reserve -= ev.cost;
-          eventOutcomeText += ` ✅ Sua reserva cobriu os ${fmtBRL(ev.cost)} sem precisar fazer dívidas!`;
-        } else {
-          const missing = ev.cost - salState.reserve;
-          salState.reserve = 0;
-          salState.debt += missing;
-          salState.wellbeing = Math.max(0, salState.wellbeing - 10);
-          eventOutcomeText += ` ⚠️ Reserva insuficiente! Você entrou em ${fmtBRL(missing)} no cheque especial (juros de 12% a.m.).`;
-        }
-      }
-      if (ev.needsIncrease) {
-        salState.minNeeds += ev.needsIncrease;
-      }
-      if (ev.bonus) {
-        salState.reserve += ev.bonus;
-        eventOutcomeText += ` 💰 +${fmtBRL(ev.bonus)} adicionados à sua reserva!`;
-      }
-      if (ev.salaryIncrease) {
-        salState.income += ev.salaryIncrease;
-      }
-      if (ev.wellbeingDelta) {
-        salState.wellbeing = Math.min(100, Math.max(0, salState.wellbeing + ev.wellbeingDelta));
-      }
-
-      // Adiciona ao log visual
-      const logBox = document.getElementById('sal-event-log');
-      const card = document.createElement('div');
-      card.className = 'p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm space-y-1 fade-in';
-      card.innerHTML = `
-        <div class="flex justify-between font-bold text-purple-600 dark:text-purple-400">
-          <span>Mês ${salState.month}: ${ev.title}</span>
-          <span class="font-mono">Poupou: ${fmtBRL(savings)}</span>
-        </div>
-        <p class="text-slate-600 dark:text-slate-300 leading-relaxed">${eventOutcomeText}</p>
-      `;
-      logBox.prepend(card);
-
-      // Atualiza HUD
-      document.getElementById('sal-income').textContent = fmtBRL(salState.income);
-      document.getElementById('sal-reserve').textContent = fmtBRL(salState.reserve);
-      document.getElementById('sal-debt').textContent = fmtBRL(salState.debt);
-      document.getElementById('sal-wellbeing-txt').textContent = `${salState.wellbeing}%`;
-      document.getElementById('sal-wellbeing-bar').style.width = `${salState.wellbeing}%`;
-
-      if (salState.month >= salState.maxMonths) {
-        finishSalaryGame();
+      if (salState.month >= 6 || salState.reserve < -300) {
+        salState.over = true;
+        const btn = document.getElementById('sal-next-btn');
+        btn.textContent = salState.reserve >= 0
+          ? `🏆 Parabéns! Você sobreviveu aos 6 meses com ${formatBRL(salState.reserve)} na reserva! (Jogar de novo)`
+          : `⚠️ Você entrou no cheque especial! Clique para tentar outra estratégia.`;
       } else {
         salState.month++;
-        document.getElementById('sal-round-badge').textContent = `Mês ${salState.month} de ${salState.maxMonths}`;
-        updateSalarySliders('init');
       }
+      renderSalaryUI();
     }
 
-    function finishSalaryGame() {
-      document.getElementById('sal-gameplay-area').classList.add('hidden');
-      document.getElementById('sal-summary-area').classList.remove('hidden');
-
-      document.getElementById('sal-end-reserve').textContent = fmtBRL(salState.reserve);
-      document.getElementById('sal-end-debt').textContent = fmtBRL(salState.debt);
-      document.getElementById('sal-end-wellbeing').textContent = `${salState.wellbeing}%`;
-
-      const titleEl = document.getElementById('sal-final-title');
-      const descEl = document.getElementById('sal-final-desc');
-      const emojiEl = document.getElementById('sal-final-emoji');
-
-      if (salState.debt === 0 && salState.reserve >= 800 && salState.wellbeing >= 60) {
-        emojiEl.textContent = '🏆';
-        titleEl.textContent = 'Mestre do Orçamento Pessoal!';
-        descEl.textContent = 'Excelente! Você sobreviveu aos 6 meses sem dívidas, construiu uma reserva sólida para emergências e manteve sua qualidade de vida equilibrada.';
-      } else if (salState.debt === 0) {
-        emojiEl.textContent = '👏';
-        titleEl.textContent = 'Sobreviveu no Azul!';
-        descEl.textContent = 'Você terminou sem dívidas! Tente apenas equilibrar um pouco mais a reserva de emergência e o bem-estar nos próximos ciclos.';
-      } else {
-        emojiEl.textContent = '📉';
-        titleEl.textContent = 'Alerta Vermelho: Endividamento!';
-        descEl.textContent = 'Os imprevistos pesaram e você caiu nos juros do cheque especial. Lembre-se: construir uma reserva logo nos primeiros meses é o escudo contra dívidas!';
-      }
-    }
-
-    function resetSalaryGame() {
-      salState = {
-        month: 1,
-        maxMonths: 6,
-        income: 1500,
-        minNeeds: 850,
-        reserve: 0,
-        wellbeing: 75,
-        debt: 0,
-        usedEvents: []
-      };
-      document.getElementById('sal-gameplay-area').classList.remove('hidden');
-      document.getElementById('sal-summary-area').classList.add('hidden');
-      document.getElementById('sal-round-badge').textContent = 'Mês 1 de 6';
-      document.getElementById('sal-income').textContent = fmtBRL(1500);
-      document.getElementById('sal-reserve').textContent = fmtBRL(0);
-      document.getElementById('sal-debt').textContent = fmtBRL(0);
-      document.getElementById('sal-wellbeing-txt').textContent = '75%';
-      document.getElementById('sal-wellbeing-bar').style.width = '75%';
-      document.getElementById('rng-needs').value = 850;
-      document.getElementById('rng-wants').value = 350;
-      document.getElementById('rng-savings').value = 300;
-      document.getElementById('sal-event-log').innerHTML = `
-        <div class="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-sm text-slate-700 dark:text-slate-200">
-          <strong>Nova simulação iniciada!</strong> Ajuste seu orçamento mensal de R$ 1.500,00 e avance os meses.
-        </div>
-      `;
-      updateSalarySliders('init');
-    }
-
-    // =========================================================================
-    // MÓDULO 3: BATALHA DE INVESTIMENTOS (10 ANOS)
-    // =========================================================================
+    /* ==================== LÓGICA EM 3: BATALHA DE INVESTIMENTOS ==================== */
+    let batState = {};
     const macroScenarios = [
-      { tag: "Juros em Alta", headline: "Banco Central sobe a Selic para 13,75% para conter a inflação.", selic: 0.1375, ipca: 0.065, fiis: 0.08, stocks: -0.05 },
-      { tag: "Boom da Bolsa", headline: "Queda nos juros e avanço tecnológico impulsionam ações em +28%!", selic: 0.095, ipca: 0.040, fiis: 0.16, stocks: 0.28 },
-      { tag: "Choque Inflacionário", headline: "Crise energética faz inflação disparar para 10,2% ao ano.", selic: 0.125, ipca: 0.102, fiis: 0.09, stocks: 0.02 },
-      { tag: "Crise Global", headline: "Turbulência internacional derruba a Bolsa em 22%; Renda Fixa protege carteiras.", selic: 0.115, ipca: 0.050, fiis: -0.06, stocks: -0.22 },
-      { tag: "Recuperação Forte", headline: "Empresas batem recorde de lucros e dividendos de FIIs disparam.", selic: 0.085, ipca: 0.038, fiis: 0.19, stocks: 0.24 },
-      { tag: "Estabilidade", headline: "Economia cresce de forma equilibrada com juros e inflação sob controle.", selic: 0.100, ipca: 0.042, fiis: 0.12, stocks: 0.14 },
-      { tag: "Aperto Monetário", headline: "Copom eleva juros novamente; Tesouro Selic entrega rentabilidade recorde.", selic: 0.1425, ipca: 0.058, fiis: 0.07, stocks: -0.03 },
-      { tag: "Rali de Fim de Década", headline: "Investidores estrangeiros voltam ao Brasil e Bolsa sobe 25%.", selic: 0.090, ipca: 0.039, fiis: 0.15, stocks: 0.25 },
-      { tag: "Ajuste Fiscal", headline: "Volatilidade no mercado exige diversificação entre IPCA+ e caixa.", selic: 0.110, ipca: 0.062, fiis: 0.10, stocks: 0.04 },
-      { tag: "Expansão Sustentável", headline: "Consumo interno aquecido favorece empresas e fundos imobiliários.", selic: 0.0925, ipca: 0.041, fiis: 0.14, stocks: 0.18 }
+      { news: 'Selic sobe para 13,75% para conter inflação. Renda fixa paga muito bem; Bolsa sofre.', ret: { selic: 0.137, ipca: 0.11, fii: 0.04, stocks: -0.05 }, poup: 0.075, inf: 0.065 },
+      { news: 'Inflação dispara para 9% ao ano! Quem está indexado ao IPCA protege o poder de compra.', ret: { selic: 0.12, ipca: 0.15, fii: 0.08, stocks: 0.03 }, poup: 0.07, inf: 0.09 },
+      { news: 'Queda nos juros e retomada econômica! Bolsa e Fundos Imobiliários disparam.', ret: { selic: 0.09, ipca: 0.10, fii: 0.18, stocks: 0.26 }, poup: 0.062, inf: 0.042 },
+      { news: 'Crise externa gera forte volatilidade na Bolsa (-14%), enquanto Selic segura o caixa.', ret: { selic: 0.115, ipca: 0.095, fii: -0.04, stocks: -0.14 }, poup: 0.07, inf: 0.05 },
+      { news: 'Boom tecnológico e recorde de exportações impulsionam ações (+24%).', ret: { selic: 0.10, ipca: 0.09, fii: 0.14, stocks: 0.24 }, poup: 0.065, inf: 0.04 }
     ];
-
-    let batState = {
-      year: 1,
-      maxYears: 10,
-      wealth: 10000,
-      poupanca: 10000,
-      inflationLine: 10000,
-      historyYears: ['Início'],
-      historyWealth: [10000],
-      historyPoupanca: [10000],
-      historyInflation: [10000],
-      avgStocksAlloc: []
-    };
-
-    let battleChartInstance = null;
-
-    function updateBattleAllocation() {
-      const s = parseInt(document.getElementById('rng-asset-selic').value);
-      const i = parseInt(document.getElementById('rng-asset-ipca').value);
-      const f = parseInt(document.getElementById('rng-asset-fiis').value);
-      const st = parseInt(document.getElementById('rng-asset-stocks').value);
-
-      document.getElementById('lbl-asset-selic').textContent = `${s}%`;
-      document.getElementById('lbl-asset-ipca').textContent = `${i}%`;
-      document.getElementById('lbl-asset-fiis').textContent = `${f}%`;
-      document.getElementById('lbl-asset-stocks').textContent = `${st}%`;
-
-      const total = s + i + f + st;
-      const badge = document.getElementById('bat-total-pct');
-      const warn = document.getElementById('bat-warning');
-      const btn = document.getElementById('btn-advance-year');
-
-      badge.textContent = `Total: ${total}%`;
-      if (total === 100) {
-        badge.className = 'px-3 py-1 rounded-full font-mono text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400';
-        warn.classList.add('hidden');
-        btn.disabled = false;
-        btn.classList.remove('opacity-50', 'cursor-not-allowed');
-      } else {
-        badge.className = 'px-3 py-1 rounded-full font-mono text-xs font-bold bg-rose-500/15 text-rose-500';
-        warn.classList.remove('hidden');
-        btn.disabled = true;
-        btn.classList.add('opacity-50', 'cursor-not-allowed');
-      }
-    }
-
-    function setBattlePreset(s, i, f, st) {
-      document.getElementById('rng-asset-selic').value = s;
-      document.getElementById('rng-asset-ipca').value = i;
-      document.getElementById('rng-asset-fiis').value = f;
-      document.getElementById('rng-asset-stocks').value = st;
-      updateBattleAllocation();
-    }
-
-    function advanceBattleYear() {
-      if (batState.year > batState.maxYears) return;
-
-      const s = parseInt(document.getElementById('rng-asset-selic').value) / 100;
-      const i = parseInt(document.getElementById('rng-asset-ipca').value) / 100;
-      const f = parseInt(document.getElementById('rng-asset-fiis').value) / 100;
-      const st = parseInt(document.getElementById('rng-asset-stocks').value) / 100;
-
-      if (Math.round((s + i + f + st) * 100) !== 100) return;
-
-      batState.avgStocksAlloc.push(st * 100);
-
-      // Cenário econômico do ano atual
-      const scen = macroScenarios[batState.year - 1];
-
-      // Retorno de cada classe no ano
-      const retSelic = scen.selic;
-      const retIpca = scen.ipca + 0.055; // IPCA + 5,5% real
-      const retFiis = scen.fiis;
-      const retStocks = scen.stocks;
-
-      // Retorno ponderado da carteira do aluno
-      const portfolioReturn = (s * retSelic) + (i * retIpca) + (f * retFiis) + (st * retStocks);
-
-      // Aporte anual de R$ 500 + rendimento
-      const annualContribution = 500;
-      batState.wealth = (batState.wealth + annualContribution) * (1 + portfolioReturn);
-
-      // Poupança rende ~6,17% ao ano + TR (~7,2% no cenário de juros altos)
-      const poupRate = scen.selic > 0.085 ? 0.072 : 0.70 * scen.selic;
-      batState.poupanca = (batState.poupanca + annualContribution) * (1 + poupRate);
-
-      // Linha da Inflação (capital + aportes corrigidos pelo IPCA)
-      batState.inflationLine = (batState.inflationLine + annualContribution) * (1 + scen.ipca);
-
-      batState.historyYears.push(`Ano ${batState.year}`);
-      batState.historyWealth.push(batState.wealth.toFixed(2));
-      batState.historyPoupanca.push(batState.poupanca.toFixed(2));
-      batState.historyInflation.push(batState.inflationLine.toFixed(2));
-
-      // Atualiza HUD
-      document.getElementById('bat-my-wealth').textContent = fmtBRL(batState.wealth);
-      const retPctStr = (portfolioReturn * 100).toFixed(2).replace('.', ',');
-      const retEl = document.getElementById('bat-last-return');
-      retEl.textContent = `Rendimento no Ano ${batState.year}: ${portfolioReturn >= 0 ? '+' : ''}${retPctStr}%`;
-      retEl.className = `text-[11px] font-mono mt-1 font-bold ${portfolioReturn >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
-
-      document.getElementById('bat-poupanca-wealth').textContent = fmtBRL(batState.poupanca);
-      document.getElementById('bat-inflation-wealth').textContent = fmtBRL(batState.inflationLine);
-
-      renderBattleChart();
-
-      if (batState.year >= batState.maxYears) {
-        finishBattleGame();
-      } else {
-        batState.year++;
-        const nextScen = macroScenarios[batState.year - 1];
-        document.getElementById('bat-year-badge').textContent = `Ano ${batState.year} de ${batState.maxYears}`;
-        document.getElementById('bat-scenario-tag').textContent = nextScen.tag;
-        document.getElementById('bat-headline').textContent = `"${nextScen.headline}"`;
-        document.getElementById('bat-selic').textContent = `${(nextScen.selic * 100).toFixed(2).replace('.', ',')}% a.a.`;
-        document.getElementById('bat-ipca').textContent = `${(nextScen.ipca * 100).toFixed(2).replace('.', ',')}% a.a.`;
-      }
-    }
-
-    function finishBattleGame() {
-      const btn = document.getElementById('btn-advance-year');
-      btn.disabled = true;
-      btn.textContent = 'Simulação Concluída (10 Anos)';
-      btn.classList.add('opacity-50', 'cursor-not-allowed');
-
-      const banner = document.getElementById('bat-final-banner');
-      banner.classList.remove('hidden');
-
-      const avgStocks = batState.avgStocksAlloc.reduce((a, b) => a + b, 0) / batState.avgStocksAlloc.length;
-      let profile = 'Moderado / Equilibrado';
-      if (avgStocks < 12) profile = 'Conservador (Foco em Segurança)';
-      else if (avgStocks > 35) profile = 'Arrojado (Foco em Crescimento)';
-      else profile = 'Estrategista Diversificado';
-
-      document.getElementById('bat-profile-badge').textContent = `Perfil: ${profile}`;
-
-      const beatInflation = batState.wealth > batState.inflationLine;
-      const beatPoupanca = batState.wealth > batState.poupanca;
-
-      document.getElementById('bat-final-title').textContent = beatPoupanca
-        ? `Parabéns! Você superou a Poupança em ${fmtBRL(batState.wealth - batState.poupanca)}!`
-        : 'A Poupança ficou na frente desta vez — veja o porquê!';
-
-      document.getElementById('bat-final-msg').textContent = `
-        Após 10 anos (com R$ 15.000,00 totais investidos do seu bolso), sua carteira fechou em ${fmtBRL(batState.wealth)}.
-        ${beatInflation ? 'Você protegeu e multiplicou seu poder de compra acima da inflação!' : 'A inflação corroeu parte dos ganhos. Ativos atrelados ao IPCA+ ajudam a evitar isso.'}
-      `;
-    }
 
     function resetBattleGame() {
       batState = {
         year: 1,
-        maxYears: 10,
         wealth: 10000,
         poupanca: 10000,
         inflationLine: 10000,
         historyYears: ['Início'],
         historyWealth: [10000],
         historyPoupanca: [10000],
-        historyInflation: [10000],
-        avgStocksAlloc: []
+        historyInflation: [10000]
       };
-      const firstScen = macroScenarios[0];
-      document.getElementById('bat-year-badge').textContent = 'Ano 1 de 10';
-      document.getElementById('bat-scenario-tag').textContent = firstScen.tag;
-      document.getElementById('bat-headline').textContent = `"${firstScen.headline}"`;
-      document.getElementById('bat-selic').textContent = `${(firstScen.selic * 100).toFixed(2).replace('.', ',')}% a.a.`;
-      document.getElementById('bat-ipca').textContent = `${(firstScen.ipca * 100).toFixed(2).replace('.', ',')}% a.a.`;
-
-      document.getElementById('bat-my-wealth').textContent = fmtBRL(10000);
-      document.getElementById('bat-last-return').textContent = 'Capital inicial';
-      document.getElementById('bat-last-return').className = 'text-[11px] font-mono text-slate-400 mt-1';
-      document.getElementById('bat-poupanca-wealth').textContent = fmtBRL(10000);
-      document.getElementById('bat-inflation-wealth').textContent = fmtBRL(10000);
-
-      document.getElementById('bat-final-banner').classList.add('hidden');
-      const btn = document.getElementById('btn-advance-year');
-      btn.disabled = false;
-      btn.textContent = 'Investir e Avançar 1 Ano (+R$ 500 aporte) →';
-      btn.classList.remove('opacity-50', 'cursor-not-allowed');
-
-      setBattlePreset(40, 30, 15, 15);
-      renderBattleChart();
+      document.getElementById('bat-next-btn').disabled = false;
+      document.getElementById('bat-next-btn').textContent = 'Simular Próximo Ano →';
+      updateBattleUI();
     }
 
-    function renderBattleChart() {
+    function checkAllocSum() {
+      const s = Number(document.getElementById('alloc-selic').value) || 0;
+      const i = Number(document.getElementById('alloc-ipca').value) || 0;
+      const f = Number(document.getElementById('alloc-fii').value) || 0;
+      const a = Number(document.getElementById('alloc-stocks').value) || 0;
+      const sum = s + i + f + a;
+      const msg = document.getElementById('alloc-sum-msg');
+      const btn = document.getElementById('bat-next-btn');
+      if (sum === 100) {
+        msg.textContent = 'Total alocado: 100% (Pronto para avançar)';
+        msg.className = 'text-xs font-bold text-emerald-600';
+        btn.disabled = batState.year > 10;
+      } else {
+        msg.textContent = `Total alocado: ${sum}% (Ajuste para fechar exatamente 100%)`;
+        msg.className = 'text-xs font-bold text-rose-600';
+        btn.disabled = true;
+      }
+    }
+
+    function advanceBattleYear() {
+      if (batState.year > 10) return;
+      const s = Number(document.getElementById('alloc-selic').value) / 100;
+      const i = Number(document.getElementById('alloc-ipca').value) / 100;
+      const f = Number(document.getElementById('alloc-fii').value) / 100;
+      const a = Number(document.getElementById('alloc-stocks').value) / 100;
+
+      const sc = macroScenarios[(batState.year - 1) % macroScenarios.length];
+      const portfolioReturn = (s * sc.ret.selic) + (i * sc.ret.ipca) + (f * sc.ret.fii) + (a * sc.ret.stocks);
+
+      batState.wealth = batState.wealth * (1 + portfolioReturn);
+      batState.poupanca = batState.poupanca * (1 + sc.poup);
+      batState.inflationLine = batState.inflationLine * (1 + sc.inf);
+
+      batState.historyYears.push(`Ano ${batState.year}`);
+      batState.historyWealth.push(Number(batState.wealth.toFixed(2)));
+      batState.historyPoupanca.push(Number(batState.poupanca.toFixed(2)));
+      batState.historyInflation.push(Number(batState.inflationLine.toFixed(2)));
+
+      batState.year++;
+      updateBattleUI();
+    }
+
+    function updateBattleUI() {
+      const done = batState.year > 10;
+      document.getElementById('bat-year').textContent = done ? 'Concluído (10 Anos)' : `Ano ${batState.year} / 10`;
+      document.getElementById('bat-wealth').textContent = `Patrimônio: ${formatBRL(batState.wealth)}`;
+
+      if (done) {
+        const beatInf = batState.wealth > batState.inflationLine;
+        document.getElementById('bat-news').innerHTML = `<strong>🏁 Fim dos 10 Anos!</strong> Sua carteira chegou a <strong>${formatBRL(batState.wealth)}</strong> contra <strong>${formatBRL(batState.poupanca)}</strong> da Poupança e <strong>${formatBRL(batState.inflationLine)}</strong> da Inflação (IPCA). ${beatInf ? 'Você venceu a inflação com ganho real!' : 'A inflação corroeu parte do seu poder de compra.'}`;
+        document.getElementById('bat-next-btn').disabled = true;
+        document.getElementById('bat-next-btn').textContent = 'Batalha Encerrada';
+      } else {
+        const nextSc = macroScenarios[(batState.year - 1) % macroScenarios.length];
+        document.getElementById('bat-news').innerHTML = `<strong>📰 Boletim Econômico do Ano ${batState.year}:</strong> ${nextSc.news}`;
+      }
+
       const ctx = document.getElementById('battleChart').getContext('2d');
-      const isDark = document.documentElement.classList.contains('dark');
-      const gridColor = isDark ? 'rgba(148, 163, 184, 0.1)' : 'rgba(15, 23, 42, 0.08)';
-      const textColor = isDark ? '#94a3b8' : '#475569';
-
       if (battleChartInstance) battleChartInstance.destroy();
-
       battleChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
           labels: batState.historyYears,
           datasets: [
-            {
-              label: 'Sua Carteira',
-              data: batState.historyWealth,
-              borderColor: '#f59e0b',
-              backgroundColor: 'rgba(245, 158, 11, 0.15)',
-              borderWidth: 3.5,
-              fill: true,
-              tension: 0.25
-            },
-            {
-              label: 'Poupança',
-              data: batState.historyPoupanca,
-              borderColor: '#64748b',
-              borderWidth: 2,
-              borderDash: [4, 4],
-              fill: false,
-              tension: 0.25
-            },
-            {
-              label: 'Correção Inflação (IPCA)',
-              data: batState.historyInflation,
-              borderColor: '#f43f5e',
-              borderWidth: 2,
-              fill: false,
-              tension: 0.25
-            }
+            { label: 'Sua Carteira', data: batState.historyWealth, borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.15)', fill: true, tension: 0.3 },
+            { label: 'Poupança', data: batState.historyPoupanca, borderColor: '#64748b', borderDash: [5, 5], tension: 0.3 },
+            { label: 'Inflação (IPCA)', data: batState.historyInflation, borderColor: '#ef4444', tension: 0.3 }
           ]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: { labels: { color: textColor, font: { family: 'Inter', size: 12 } } },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => `${ctx.dataset.label}: ${fmtBRL(parseFloat(ctx.raw))}`
-              }
-            }
-          },
-          scales: {
-            x: { grid: { color: gridColor }, ticks: { color: textColor } },
-            y: {
-              grid: { color: gridColor },
-              ticks: {
-                color: textColor,
-                callback: (v) => 'R$ ' + Number(v).toLocaleString('pt-BR')
-              }
-            }
-          }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
       });
     }
-
-    // Inicializa estado inicial ao carregar a página
-    window.onload = function () {
-      const firstScen = macroScenarios[0];
-      document.getElementById('bat-scenario-tag').textContent = firstScen.tag;
-      document.getElementById('bat-headline').textContent = `"${firstScen.headline}"`;
-      document.getElementById('bat-selic').textContent = `${(firstScen.selic * 100).toFixed(2).replace('.', ',')}% a.a.`;
-      document.getElementById('bat-ipca').textContent = `${(firstScen.ipca * 100).toFixed(2).replace('.', ',')}% a.a.`;
-    };
   </script>
 </body>
 </html>
