@@ -24,6 +24,7 @@
     .card-orange { border-top: 4px solid #f59e0b; }
     .card-blue { border-top: 4px solid #0ea5e9; }
     .card-pink { border-top: 4px solid #ec4899; }
+    .card-teal { border-top: 4px solid #14b8a6; }
     .tab-active-kids { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); }
     .tab-active-hs { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35); }
     .area-active-fin { background: linear-gradient(135deg, #10b981, #059669); color: white; }
@@ -91,7 +92,7 @@
         </span>
         <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">Por onde você quer começar hoje?</h2>
         <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
-          Explore nossos simuladores de decisões econômicas ou treine seu raciocínio lógico com jogos clássicos de matemática básica.
+          Explore nossos simuladores de decisões econômicas ou treine seu raciocínio lógico com jogos interativos de matemática básica.
         </p>
       </div>
 
@@ -120,10 +121,10 @@
             <div class="w-16 h-16 rounded-2xl bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition">
               🧮
             </div>
-            <span class="text-xs font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400">Jogos & Raciocínio Lógico</span>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400">5 Jogos Interativos</span>
             <h3 class="text-2xl font-extrabold mt-1 mb-3 group-hover:text-sky-600 transition">Matemática Básica</h3>
             <p class="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
-              Aprenda jogando! Encaixe frações equivalentes no Dominó, encontre pares no Jogo da Memória Matemático e avance casas na Trilha de Tabuleiro.
+              Dominó de Frações, Memória Matemática, Trilha de Tabuleiro, Batalha Naval no Plano Cartesiano e Caça-Equações!
             </p>
           </div>
           <div class="w-full py-3.5 px-5 rounded-xl bg-sky-600 group-hover:bg-sky-700 text-white font-extrabold text-sm flex items-center justify-between transition">
@@ -141,15 +142,15 @@
       </div>
       <div class="text-center max-w-2xl mx-auto mb-10">
         <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300 mb-3">
-          ARENA DE MATEMÁTICA BÁSICA
+          ARENA DE MATEMÁTICA BÁSICA • 5 JOGOS
         </span>
-        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">Jogos de Cálculo & Frações</h2>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">Jogos de Cálculo, Frações & Álgebra</h2>
         <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
-          Escolha um dos jogos abaixo para treinar equivalência de frações, cálculo mental, operações básicas e lógica matemática.
+          Escolha um desafio para treinar equivalência de frações, pares ordenados no plano cartesiano, equações do 1º grau e cálculo mental.
         </p>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Card Jogo 1: Dominó de Frações -->
         <div onclick="openModule('math-domino')" class="card-blue bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
           <div>
@@ -203,6 +204,42 @@
             <span>→</span>
           </div>
         </div>
+
+        <!-- Card Jogo 4: Batalha Naval no Plano Cartesiano -->
+        <div onclick="openModule('math-battleship')" class="card-teal bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">🚢</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300">Plano Cartesiano</span>
+            </div>
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-teal-600 transition">Batalha Naval Cartesiana</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Localize e afunde 3 navios escondidos nos 4 quadrantes usando pares ordenados (x, y) positivos e negativos!
+            </p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-teal-600 dark:text-teal-400">
+            <span>Abrir Radar (x, y)</span>
+            <span>→</span>
+          </div>
+        </div>
+
+        <!-- Card Jogo 5: Caça-Equações -->
+        <div onclick="openModule('math-equations')" class="card-pink bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">🔍</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300">Álgebra • 1º Grau</span>
+            </div>
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-pink-600 transition">Caça-Equações</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Descubra o valor oculto de <strong>x</strong> em 8 missões progressivas com resolução passo a passo comentada.
+            </p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-pink-600 dark:text-pink-400">
+            <span>Caçar o Valor de X</span>
+            <span>→</span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -237,7 +274,7 @@
           </div>
         </div>
 
-        <!-- Controles de Encaixe quando uma peça está selecionada -->
+        <!-- Controles de Encaixe -->
         <div id="dom-side-picker" class="hidden mb-5 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 flex flex-wrap items-center justify-between gap-3">
           <span class="text-sm font-bold">Onde você deseja encaixar a peça selecionada?</span>
           <div class="flex gap-2">
@@ -257,7 +294,6 @@
           <div id="dom-player-hand" class="flex flex-wrap gap-3"></div>
         </div>
 
-        <!-- Cola rápida de equivalências -->
         <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
           <strong>💡 Dica de Equivalência:</strong> 1/2 = 2/4 = 0,5 = 50% &nbsp;•&nbsp; 1/4 = 2/8 = 0,25 = 25% &nbsp;•&nbsp; 3/4 = 0,75 = 75% &nbsp;•&nbsp; 1/5 = 0,2 = 20% &nbsp;•&nbsp; 2/5 = 0,4 = 40% &nbsp;•&nbsp; 1/1 = 100%
         </div>
@@ -314,7 +350,6 @@
           </div>
         </div>
 
-        <!-- Placar e Dado -->
         <div class="grid sm:grid-cols-3 gap-4 mb-6">
           <div id="p1-card" class="p-4 rounded-xl border-2 border-sky-500 bg-sky-50 dark:bg-sky-950/30 flex items-center justify-between">
             <div>
@@ -340,7 +375,6 @@
           </div>
         </div>
 
-        <!-- Modal/Box de Pergunta do Tabuleiro -->
         <div id="board-question-box" class="hidden mb-6 p-5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-400 dark:border-indigo-700">
           <div class="flex items-center justify-between mb-2">
             <span id="bq-badge" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-indigo-600 text-white">Desafio para avançar</span>
@@ -350,12 +384,10 @@
           <div id="bq-options" class="grid grid-cols-3 gap-3"></div>
         </div>
 
-        <!-- Log do Tabuleiro -->
         <div id="board-log" class="mb-5 p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300">
           Clique em "Jogar Dado" para iniciar a corrida matemática!
         </div>
 
-        <!-- Grid Visual do Tabuleiro (24 Casas) -->
         <div id="board-cells" class="grid grid-cols-4 sm:grid-cols-6 gap-2.5"></div>
 
         <div class="mt-4 flex flex-wrap gap-4 text-xs text-slate-500">
@@ -363,6 +395,132 @@
           <span>⚡ Bônus: Avança +2 casas</span>
           <span>⚠️ Armadilha: Volta 2 casas</span>
           <span>🏆 Chegada (24)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== JOGO MAT 4: BATALHA NAVAL NO PLANO CARTESIANO ==================== -->
+    <section id="mod-math-battleship" class="hidden animate-pop max-w-5xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para Matemática Básica</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <div>
+            <h2 class="text-2xl font-extrabold">🚢 Batalha Naval no Plano Cartesiano</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Encontre e afunde a frota inimiga (9 alvos no total) disparando nas coordenadas <strong>(x, y)</strong>.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="bs-hits" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200">Acertos: 0 / 9</span>
+            <span id="bs-shots" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-200">Disparos: 0</span>
+            <button onclick="initCartesianBattleship()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700 hover:opacity-80">Novo Mapa</button>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6 items-start">
+          <!-- Grade Cartesiana (-4 a 4) -->
+          <div class="lg:col-span-2 overflow-x-auto">
+            <div class="min-w-[360px] max-w-[480px] mx-auto">
+              <div id="bs-grid" class="grid grid-cols-10 gap-1 select-none"></div>
+              <div class="flex justify-between text-[11px] font-bold text-slate-500 mt-3 px-2">
+                <span>2º Quadrante (-x, +y)</span>
+                <span>1º Quadrante (+x, +y)</span>
+              </div>
+              <div class="flex justify-between text-[11px] font-bold text-slate-500 px-2">
+                <span>3º Quadrante (-x, -y)</span>
+                <span>4º Quadrante (+x, -y)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Painel de Coordenadas e Radar -->
+          <div class="space-y-4">
+            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+              <h3 class="font-extrabold text-sm mb-1">🎯 Comando de Tiro (x, y)</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Digite as coordenadas ou clique direto no ponto do plano:</p>
+              <div class="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                  <label class="block text-xs font-bold mb-1">Eixo X (-4 a 4)</label>
+                  <input type="number" id="bs-input-x" min="-4" max="4" value="2" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-extrabold text-center" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold mb-1">Eixo Y (-4 a 4)</label>
+                  <input type="number" id="bs-input-y" min="-4" max="4" value="3" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-extrabold text-center" />
+                </div>
+              </div>
+              <button onclick="fireCoordinateInput()" class="w-full py-3 rounded-xl font-extrabold text-sm bg-teal-600 hover:bg-teal-700 text-white shadow transition">
+                🚀 Disparar em (x, y)
+              </button>
+            </div>
+
+            <div id="bs-radar-msg" class="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-xs font-semibold leading-relaxed">
+              🛰️ <strong>Radar Ativo:</strong> 3 embarcações escondidas no oceano cartesiano (Porta-aviões: 4 pts, Submarino: 3 pts, Lancha: 2 pts).
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs space-y-1.5">
+              <div class="font-extrabold mb-1">Legenda do Plano:</div>
+              <div>💥 <strong>Fogo:</strong> Acertou parte de um navio!</div>
+              <div>🌊 <strong>Água:</strong> Nenhum navio nessa coordenada.</div>
+              <div>➕ <strong>Eixos X e Y:</strong> Linhas centrais (x = 0 ou y = 0).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== JOGO MAT 5: CAÇA-EQUAÇÕES ==================== -->
+    <section id="mod-math-equations" class="hidden animate-pop max-w-3xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para Matemática Básica</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold">🔍 Caça-Equações (1º Grau)</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Isole a incógnita <strong>x</strong> e descubra o valor exato que equilibra a equação.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="eq-level" onchange="initEquationGame()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
+              <option value="easy">Nível 1: Iniciante</option>
+              <option value="medium">Nível 2: Intermediário</option>
+              <option value="hard">Nível 3: Desafio (Negativos)</option>
+            </select>
+            <span id="eq-progress" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800">1 / 8</span>
+            <span id="eq-score" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-pink-100 text-pink-800 dark:bg-pink-900/40 dark:text-pink-200">Pontos: 0</span>
+          </div>
+        </div>
+
+        <div id="eq-play-area">
+          <div class="p-8 rounded-2xl bg-gradient-to-br from-pink-50 to-indigo-50 dark:from-pink-950/30 dark:to-indigo-950/30 border border-pink-200 dark:border-pink-800/60 text-center mb-6">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-pink-600 dark:text-pink-400">Resolva para x</span>
+            <div id="eq-display" class="text-3xl sm:text-4xl font-extrabold tracking-wide my-3 font-mono">
+              2x + 5 = 19
+            </div>
+            <span id="eq-streak" class="inline-block text-xs font-bold px-3 py-1 rounded-full bg-white/80 dark:bg-slate-900/80 text-amber-600">🔥 Sequência: 0</span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 mb-4">
+            <div class="flex-1 flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-4 border border-slate-300 dark:border-slate-700">
+              <span class="font-extrabold text-lg text-pink-600 dark:text-pink-400 mr-2">x =</span>
+              <input type="number" id="eq-answer-input" placeholder="Digite o valor de x" onkeydown="if(event.key==='Enter') checkEquationAnswer()" class="w-full py-3 bg-transparent font-extrabold text-lg focus:outline-none" />
+            </div>
+            <button id="eq-submit-btn" onclick="checkEquationAnswer()" class="px-6 py-3 rounded-xl font-extrabold bg-pink-600 hover:bg-pink-700 text-white shadow transition">
+              Verificar Resposta
+            </button>
+          </div>
+
+          <!-- Alternativas rápidas opcionais -->
+          <div id="eq-quick-choices" class="grid grid-cols-4 gap-2 mb-4"></div>
+
+          <div id="eq-feedback" class="hidden p-4 rounded-xl border text-sm leading-relaxed"></div>
+          <button id="eq-next-btn" onclick="nextEquation()" class="hidden mt-4 w-full py-3 rounded-xl font-extrabold bg-slate-900 text-white dark:bg-white dark:text-slate-900 hover:opacity-90 transition">
+            Próxima Equação →
+          </button>
+        </div>
+
+        <div id="eq-end-area" class="hidden text-center py-6">
+          <div class="text-6xl mb-3">🏅</div>
+          <h3 class="text-2xl font-extrabold mb-2">Caçada Concluída!</h3>
+          <p id="eq-final-summary" class="text-slate-600 dark:text-slate-300 mb-6"></p>
+          <button onclick="initEquationGame()" class="px-6 py-3 rounded-xl font-extrabold bg-pink-600 text-white hover:bg-pink-700 transition">
+            Jogar Nova Rodada
+          </button>
         </div>
       </div>
     </section>
@@ -808,7 +966,7 @@
   </main>
 
   <script>
-    let currentArea = 'portal'; // 'portal' | 'fin' | 'math'
+    let currentArea = 'portal';
     let currentTrack = 'kids';
     let piggyChartInstance = null;
     let snowballChartInstance = null;
@@ -848,7 +1006,7 @@
     function hideAllSections() {
       [
         'portal-home', 'hub-math', 'hub-kids', 'hub-hs',
-        'mod-math-domino', 'mod-math-memory', 'mod-math-board',
+        'mod-math-domino', 'mod-math-memory', 'mod-math-board', 'mod-math-battleship', 'mod-math-equations',
         'mod-kids-need', 'mod-kids-piggy', 'mod-kids-shop',
         'mod-hs-snowball', 'mod-hs-salary', 'mod-hs-battle'
       ].forEach(id => document.getElementById(id).classList.add('hidden'));
@@ -898,6 +1056,8 @@
       if (mod === 'math-domino') initDominoGame();
       if (mod === 'math-memory') initMemoryGame();
       if (mod === 'math-board') initBoardGame();
+      if (mod === 'math-battleship') initCartesianBattleship();
+      if (mod === 'math-equations') initEquationGame();
       if (mod === 'kids-need') initKidsNeed();
       if (mod === 'kids-piggy') updatePiggySim();
       if (mod === 'kids-shop') initKidsShop();
@@ -1111,7 +1271,7 @@
     const memoryDecks = {
       ops: [
         { a: '7 × 8', b: '56' }, { a: '9 × 6', b: '54' }, { a: '12 × 5', b: '60' }, { a: '81 ÷ 9', b: '9' },
-        { a: '15 + 27', b: '42' }, { a: '100 - 37', b: '63' }, { a: '14 × 3', b: '42' }, { a: '96 ÷ 8', b: '12' }
+        { a: '15 + 27', b: '42' }, { a: '100 - 37', b: '63' }, { a: '16 + 27', b: '43' }, { a: '96 ÷ 8', b: '12' }
       ],
       frac: [
         { a: '1/2', b: '50%' }, { a: '3/4', b: '0,75' }, { a: '1/4', b: '25%' }, { a: '2/5', b: '0,4' },
@@ -1127,17 +1287,11 @@
     function initMemoryGame() {
       const topic = document.getElementById('mem-topic').value;
       const basePairs = memoryDecks[topic];
-      // Evitar valores repetidos no mesmo tabuleiro garantindo pares únicos
       const cards = [];
       basePairs.forEach((p, pairId) => {
         cards.push({ id: `${pairId}-a`, pairId, label: p.a, flipped: false, matched: false });
         cards.push({ id: `${pairId}-b`, pairId, label: p.b, flipped: false, matched: false });
       });
-      // No deck 'ops', ajustar para não haver dois '42'
-      if (topic === 'ops') {
-        cards[8].label = '16 + 27';
-        cards[9].label = '43';
-      }
 
       memState = {
         cards: cards.sort(() => Math.random() - 0.5),
@@ -1246,7 +1400,7 @@
       const mode = document.getElementById('board-mode').value;
       boardState = {
         mode,
-        turn: 1, // 1 ou 2
+        turn: 1,
         p1: 1,
         p2: 1,
         pendingDice: 0,
@@ -1306,7 +1460,7 @@
       if (boardState.turn === 2 && boardState.mode === 'bot') {
         document.getElementById('board-log').textContent = `🤖 FinBot tirou ${dice} no dado e está calculando...`;
         setTimeout(() => {
-          const botRight = Math.random() < 0.72; // 72% de acerto do bot
+          const botRight = Math.random() < 0.72;
           if (botRight) {
             moveBoardPlayer(2, dice, '🤖 FinBot acertou o desafio e');
           } else {
@@ -1382,6 +1536,281 @@
       } else {
         document.getElementById('board-roll-btn').disabled = false;
       }
+    }
+
+    /* ==================== JOGO MAT 4: BATALHA NAVAL CARTESIANA ==================== */
+    let bsState = {};
+
+    function initCartesianBattleship() {
+      const shipLengths = [4, 3, 2];
+      const shipCoords = new Set();
+
+      shipLengths.forEach(len => {
+        let placed = false;
+        while (!placed) {
+          const horiz = Math.random() > 0.5;
+          const startX = Math.floor(Math.random() * (9 - (horiz ? len - 1 : 0))) - 4;
+          const startY = Math.floor(Math.random() * (9 - (!horiz ? len - 1 : 0))) - 4;
+          const candidate = [];
+          for (let k = 0; k < len; k++) {
+            const cx = startX + (horiz ? k : 0);
+            const cy = startY + (!horiz ? k : 0);
+            candidate.push(`${cx},${cy}`);
+          }
+          if (candidate.every(c => !shipCoords.has(c))) {
+            candidate.forEach(c => shipCoords.add(c));
+            placed = true;
+          }
+        }
+      });
+
+      bsState = {
+        ships: shipCoords,
+        shots: new Map(), // 'x,y' -> 'hit' | 'miss'
+        hits: 0,
+        totalShots: 0,
+        over: false
+      };
+      document.getElementById('bs-radar-msg').innerHTML = '🛰️ <strong>Radar Ativo:</strong> 3 embarcações escondidas no oceano cartesiano (9 coordenadas no total). Informe (x, y) para disparar!';
+      renderCartesianGrid();
+    }
+
+    function renderCartesianGrid() {
+      document.getElementById('bs-hits').textContent = `Acertos: ${bsState.hits} / 9`;
+      document.getElementById('bs-shots').textContent = `Disparos: ${bsState.totalShots}`;
+
+      const grid = document.getElementById('bs-grid');
+      let html = '';
+
+      // Cabeçalho superior com valores de X (-4 a 4)
+      html += `<div class="h-8 flex items-center justify-center text-[10px] font-extrabold text-slate-400">Y \\ X</div>`;
+      for (let x = -4; x <= 4; x++) {
+        html += `<div class="h-8 flex items-center justify-center text-xs font-extrabold ${x === 0 ? 'text-teal-600 dark:text-teal-400 underline' : 'text-slate-500'}">${x}</div>`;
+      }
+
+      // Linhas de Y = 4 até Y = -4
+      for (let y = 4; y >= -4; y--) {
+        html += `<div class="h-9 flex items-center justify-center text-xs font-extrabold ${y === 0 ? 'text-teal-600 dark:text-teal-400 underline' : 'text-slate-500'}">${y}</div>`;
+        for (let x = -4; x <= 4; x++) {
+          const key = `${x},${y}`;
+          const status = bsState.shots.get(key);
+          const isAxis = x === 0 || y === 0;
+          let cellClass = isAxis
+            ? 'bg-teal-100/70 dark:bg-teal-950/50 border-teal-400/60'
+            : 'bg-sky-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700';
+          let icon = isAxis ? '·' : '';
+
+          if (status === 'hit') {
+            cellClass = 'bg-rose-500 border-rose-600 text-white shadow-inner';
+            icon = '💥';
+          } else if (status === 'miss') {
+            cellClass = 'bg-sky-200/70 dark:bg-slate-700/70 border-sky-300 dark:border-slate-600 text-sky-700 dark:text-sky-300';
+            icon = '🌊';
+          }
+
+          html += `
+            <button onclick="fireAt(${x}, ${y})" title="(${x}, ${y})" class="h-9 rounded-lg border text-xs font-extrabold flex items-center justify-center hover:ring-2 hover:ring-teal-500 transition ${cellClass}">
+              ${icon}
+            </button>
+          `;
+        }
+      }
+      grid.innerHTML = html;
+    }
+
+    function fireCoordinateInput() {
+      const x = Number(document.getElementById('bs-input-x').value);
+      const y = Number(document.getElementById('bs-input-y').value);
+      if (isNaN(x) || isNaN(y) || x < -4 || x > 4 || y < -4 || y > 4) {
+        document.getElementById('bs-radar-msg').innerHTML = '⚠️ Coordenada inválida! Use valores inteiros de <strong>-4 a 4</strong> para X e Y.';
+        return;
+      }
+      fireAt(x, y);
+    }
+
+    function getQuadrantLabel(x, y) {
+      if (x === 0 && y === 0) return 'Origem (0, 0)';
+      if (x === 0) return 'Eixo Y';
+      if (y === 0) return 'Eixo X';
+      if (x > 0 && y > 0) return '1º Quadrante';
+      if (x < 0 && y > 0) return '2º Quadrante';
+      if (x < 0 && y < 0) return '3º Quadrante';
+      return '4º Quadrante';
+    }
+
+    function fireAt(x, y) {
+      if (bsState.over) return;
+      document.getElementById('bs-input-x').value = x;
+      document.getElementById('bs-input-y').value = y;
+      const key = `${x},${y}`;
+
+      if (bsState.shots.has(key)) {
+        document.getElementById('bs-radar-msg').innerHTML = `🔁 Você já disparou em <strong>(${x}, ${y})</strong>. Escolha outra coordenada!`;
+        return;
+      }
+
+      bsState.totalShots++;
+      const quad = getQuadrantLabel(x, y);
+
+      if (bsState.ships.has(key)) {
+        bsState.shots.set(key, 'hit');
+        bsState.hits++;
+        if (bsState.hits === 9) {
+          bsState.over = true;
+          document.getElementById('bs-radar-msg').innerHTML = `🏆 <strong>VITÓRIA TOTAL!</strong> Você afundou toda a frota cartesiana em <strong>${bsState.totalShots} disparos</strong>!`;
+        } else {
+          document.getElementById('bs-radar-msg').innerHTML = `💥 <strong>FOGO EM (${x}, ${y})!</strong> (${quad}) — Você atingiu uma embarcação! Tente pontos vizinhos na horizontal ou vertical.`;
+        }
+      } else {
+        bsState.shots.set(key, 'miss');
+        // Verifica se há navio a 1 unidade de distância
+        const neighbors = [`${x+1},${y}`, `${x-1},${y}`, `${x},${y+1}`, `${x},${y-1}`];
+        const nearShip = neighbors.some(n => bsState.ships.has(n) && !bsState.shots.has(n));
+        document.getElementById('bs-radar-msg').innerHTML = nearShip
+          ? `🌊 <strong>Água em (${x}, ${y})</strong> (${quad}), mas o sonar detectou <strong>sinal muito próximo</strong> a 1 unidade!`
+          : `🌊 <strong>Água em (${x}, ${y})</strong> (${quad}). Nenhum navio nessa região.`;
+      }
+
+      renderCartesianGrid();
+    }
+
+    /* ==================== JOGO MAT 5: CAÇA-EQUAÇÕES ==================== */
+    let eqState = {};
+
+    function generateEquationProblem(level) {
+      let x = 0, text = '', steps = '';
+      if (level === 'easy') {
+        x = Math.floor(Math.random() * 12) + 2;
+        const type = Math.floor(Math.random() * 3);
+        if (type === 0) {
+          const b = Math.floor(Math.random() * 15) + 3;
+          text = `x + ${b} = ${x + b}`;
+          steps = `x = ${x + b} - ${b} → x = ${x}`;
+        } else if (type === 1) {
+          const b = Math.floor(Math.random() * 10) + 2;
+          text = `x - ${b} = ${x - b}`;
+          steps = `x = ${x - b} + ${b} → x = ${x}`;
+        } else {
+          const a = Math.floor(Math.random() * 7) + 2;
+          text = `${a}x = ${a * x}`;
+          steps = `x = ${a * x} ÷ ${a} → x = ${x}`;
+        }
+      } else if (level === 'medium') {
+        x = Math.floor(Math.random() * 10) + 1;
+        const a = Math.floor(Math.random() * 5) + 2;
+        const b = Math.floor(Math.random() * 12) + 1;
+        if (Math.random() > 0.5) {
+          const res = a * x + b;
+          text = `${a}x + ${b} = ${res}`;
+          steps = `${a}x = ${res} - ${b} → ${a}x = ${res - b} → x = ${x}`;
+        } else {
+          const res = a * x - b;
+          text = `${a}x - ${b} = ${res}`;
+          steps = `${a}x = ${res} + ${b} → ${a}x = ${res + b} → x = ${x}`;
+        }
+      } else {
+        // Desafio: incógnita nos dois lados e possíveis negativos
+        x = Math.floor(Math.random() * 13) - 5; // -5 a 7
+        if (x === 0) x = 4;
+        const c = Math.floor(Math.random() * 3) + 1; // 1 a 3
+        const a = c + Math.floor(Math.random() * 3) + 1; // maior que c
+        const b = Math.floor(Math.random() * 10) + 1;
+        const d = (a - c) * x + b;
+        text = `${a}x + ${b} = ${c === 1 ? '' : c}x ${d >= 0 ? '+ ' + d : '- ' + Math.abs(d)}`;
+        steps = `${a}x - ${c}x = ${d} - ${b} → ${a - c}x = ${d - b} → x = ${x}`;
+      }
+
+      const opts = new Set([x]);
+      while (opts.size < 4) {
+        const delta = (Math.floor(Math.random() * 4) + 1) * (Math.random() > 0.5 ? 1 : -1);
+        opts.add(x + delta);
+      }
+      return { text, x, steps, options: Array.from(opts).sort(() => Math.random() - 0.5) };
+    }
+
+    function initEquationGame() {
+      const level = document.getElementById('eq-level').value;
+      eqState = {
+        level,
+        round: 1,
+        totalRounds: 8,
+        score: 0,
+        streak: 0,
+        current: generateEquationProblem(level),
+        answered: false
+      };
+      document.getElementById('eq-play-area').classList.remove('hidden');
+      document.getElementById('eq-end-area').classList.add('hidden');
+      renderEquationUI();
+    }
+
+    function renderEquationUI() {
+      document.getElementById('eq-progress').textContent = `${eqState.round} / ${eqState.totalRounds}`;
+      document.getElementById('eq-score').textContent = `Pontos: ${eqState.score}`;
+      document.getElementById('eq-streak').textContent = `🔥 Sequência: ${eqState.streak}`;
+      document.getElementById('eq-display').textContent = eqState.current.text;
+
+      const input = document.getElementById('eq-answer-input');
+      input.value = '';
+      input.disabled = false;
+      document.getElementById('eq-submit-btn').disabled = false;
+      document.getElementById('eq-feedback').classList.add('hidden');
+      document.getElementById('eq-next-btn').classList.add('hidden');
+
+      document.getElementById('eq-quick-choices').innerHTML = eqState.current.options.map(val => `
+        <button onclick="selectQuickEquation(${val})" class="py-2 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 hover:bg-pink-100 dark:hover:bg-pink-900/40 border border-slate-200 dark:border-slate-700 transition">
+          x = ${val}
+        </button>
+      `).join('');
+    }
+
+    function selectQuickEquation(val) {
+      if (eqState.answered) return;
+      document.getElementById('eq-answer-input').value = val;
+      checkEquationAnswer();
+    }
+
+    function checkEquationAnswer() {
+      if (eqState.answered) return;
+      const raw = document.getElementById('eq-answer-input').value;
+      if (raw === '') return;
+
+      const userVal = Number(raw);
+      const exact = eqState.current.x;
+      eqState.answered = true;
+      document.getElementById('eq-answer-input').disabled = true;
+      document.getElementById('eq-submit-btn').disabled = true;
+
+      const fb = document.getElementById('eq-feedback');
+      fb.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-300', 'text-emerald-900', 'bg-rose-50', 'border-rose-300', 'text-rose-900');
+
+      if (userVal === exact) {
+        eqState.streak++;
+        eqState.score += 15 + (eqState.streak * 3);
+        fb.classList.add('bg-emerald-50', 'border-emerald-300', 'text-emerald-900', 'dark:bg-emerald-950/50', 'dark:text-emerald-200');
+        fb.innerHTML = `✅ <strong>Exato! x = ${exact}.</strong><br><span class="text-xs opacity-90">Resolução: ${eqState.current.steps}</span>`;
+      } else {
+        eqState.streak = 0;
+        fb.classList.add('bg-rose-50', 'border-rose-300', 'text-rose-900', 'dark:bg-rose-950/50', 'dark:text-rose-200');
+        fb.innerHTML = `❌ <strong>Não foi dessa vez!</strong> O valor correto é <strong>x = ${exact}</strong>.<br><span class="text-xs opacity-90">Passo a passo: ${eqState.current.steps}</span>`;
+      }
+
+      document.getElementById('eq-score').textContent = `Pontos: ${eqState.score}`;
+      document.getElementById('eq-streak').textContent = `🔥 Sequência: ${eqState.streak}`;
+      document.getElementById('eq-next-btn').classList.remove('hidden');
+    }
+
+    function nextEquation() {
+      if (eqState.round >= eqState.totalRounds) {
+        document.getElementById('eq-play-area').classList.add('hidden');
+        document.getElementById('eq-end-area').classList.remove('hidden');
+        document.getElementById('eq-final-summary').textContent = `Você finalizou as 8 equações com ${eqState.score} pontos!`;
+        return;
+      }
+      eqState.round++;
+      eqState.answered = false;
+      eqState.current = generateEquationProblem(eqState.level);
+      renderEquationUI();
     }
 
     /* ==================== LÓGICA KIDS 1: PRECISO OU SÓ QUERO ==================== */
