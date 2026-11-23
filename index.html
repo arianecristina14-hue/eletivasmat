@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FinLab Edu — Laboratório Interativo de Educação Financeira</title>
+  <title>FinLab Edu — Matemática Básica & Educação Financeira</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,8 +22,12 @@
     .card-green { border-top: 4px solid #10b981; }
     .card-purple { border-top: 4px solid #8b5cf6; }
     .card-orange { border-top: 4px solid #f59e0b; }
+    .card-blue { border-top: 4px solid #0ea5e9; }
+    .card-pink { border-top: 4px solid #ec4899; }
     .tab-active-kids { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); }
     .tab-active-hs { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35); }
+    .area-active-fin { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .area-active-math { background: linear-gradient(135deg, #0ea5e9, #2563eb); color: white; }
     @keyframes popIn {
       0% { transform: scale(0.95); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
@@ -36,9 +40,9 @@
   <!-- Cabeçalho -->
   <header class="sticky top-0 z-40 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow">
-          ₿
+      <div class="flex items-center gap-3 cursor-pointer" onclick="goPortal()">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 via-sky-500 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow">
+          π
         </div>
         <div>
           <h1 class="font-extrabold text-lg leading-tight tracking-tight">FinLab <span class="text-emerald-600 dark:text-emerald-400">Edu</span></h1>
@@ -46,20 +50,30 @@
         </div>
       </div>
 
-      <!-- Seletor de Trilha -->
+      <!-- Navegação Principal entre Áreas -->
       <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
-        <button id="btn-track-kids" onclick="setTrack('kids')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all tab-active-kids">
-          🎒 6º ao 8º Ano (12–14 anos)
+        <button id="nav-area-portal" onclick="goPortal()" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300">
+          🏠 Portal
         </button>
-        <button id="btn-track-hs" onclick="setTrack('hs')" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-300">
+        <button id="nav-area-fin" onclick="enterArea('fin')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300">
+          💰 Financeira
+        </button>
+        <button id="nav-area-math" onclick="enterArea('math')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300">
+          🧮 Matemática Básica
+        </button>
+      </div>
+
+      <!-- Seletor de Trilha (Visível apenas na área Financeira) -->
+      <div id="fin-track-switcher" class="hidden flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+        <button id="btn-track-kids" onclick="setTrack('kids')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all tab-active-kids">
+          🎒 6º–8º Ano
+        </button>
+        <button id="btn-track-hs" onclick="setTrack('hs')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300">
           🎓 Ensino Médio
         </button>
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="goHome()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200/70 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
-          Início
-        </button>
         <button onclick="toggleTheme()" title="Alternar tema" class="p-2 rounded-lg bg-slate-200/70 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition text-sm">
           🌓
         </button>
@@ -69,8 +83,292 @@
 
   <main class="max-w-6xl mx-auto px-4 py-8">
 
+    <!-- ==================== PORTAL INICIAL (ESCOLHA DE ÁREA) ==================== -->
+    <section id="portal-home" class="animate-pop">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300 mb-3">
+          PLATAFORMA INTERATIVA DE APRENDIZAGEM
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">Por onde você quer começar hoje?</h2>
+        <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+          Explore nossos simuladores de decisões econômicas ou treine seu raciocínio lógico com jogos clássicos de matemática básica.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <!-- Botão/Card 1: Educação Financeira -->
+        <div onclick="enterArea('fin')" class="card-green bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-md hover:shadow-2xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition">
+              💰
+            </div>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">6º Ano ao Ensino Médio</span>
+            <h3 class="text-2xl font-extrabold mt-1 mb-3 group-hover:text-emerald-600 transition">Educação Financeira</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+              Simuladores de juros compostos, cofrinho turbinado, troco e descontos, orçamento 50-30-20 e batalha de investimentos na bolsa e renda fixa.
+            </p>
+          </div>
+          <div class="w-full py-3.5 px-5 rounded-xl bg-emerald-600 group-hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-between transition">
+            <span>Acessar Laboratório Financeiro</span>
+            <span>→</span>
+          </div>
+        </div>
+
+        <!-- Botão/Card 2: Matemática Básica -->
+        <div onclick="enterArea('math')" class="card-blue bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-md hover:shadow-2xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="w-16 h-16 rounded-2xl bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition">
+              🧮
+            </div>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400">Jogos & Raciocínio Lógico</span>
+            <h3 class="text-2xl font-extrabold mt-1 mb-3 group-hover:text-sky-600 transition">Matemática Básica</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+              Aprenda jogando! Encaixe frações equivalentes no Dominó, encontre pares no Jogo da Memória Matemático e avance casas na Trilha de Tabuleiro.
+            </p>
+          </div>
+          <div class="w-full py-3.5 px-5 rounded-xl bg-sky-600 group-hover:bg-sky-700 text-white font-extrabold text-sm flex items-center justify-between transition">
+            <span>Acessar Arena de Jogos</span>
+            <span>→</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== HUB: MATEMÁTICA BÁSICA ==================== -->
+    <section id="hub-math" class="hidden animate-pop">
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="goPortal()" class="text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar ao Portal Inicial</button>
+      </div>
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300 mb-3">
+          ARENA DE MATEMÁTICA BÁSICA
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">Jogos de Cálculo & Frações</h2>
+        <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+          Escolha um dos jogos abaixo para treinar equivalência de frações, cálculo mental, operações básicas e lógica matemática.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Card Jogo 1: Dominó de Frações -->
+        <div onclick="openModule('math-domino')" class="card-blue bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">🀄</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">Frações & Decimais</span>
+            </div>
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-sky-600 transition">Dominó de Frações</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Encaixe peças com valores equivalentes (ex.: 1/2, 50%, 0,5 ou 2/4) nas pontas da mesa e vença o FinBot esvaziando sua mão primeiro!
+            </p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-sky-600 dark:text-sky-400">
+            <span>Jogar Dominó</span>
+            <span>→</span>
+          </div>
+        </div>
+
+        <!-- Card Jogo 2: Jogo da Memória -->
+        <div onclick="openModule('math-memory')" class="card-purple bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">🧠</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">Cálculo & Pares</span>
+            </div>
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-purple-600 transition">Memória Matemática</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Encontre os pares conectando cada expressão matemática ao seu resultado exato. Escolha entre Tabuada, Frações ou Potências & Raízes!
+            </p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-purple-600 dark:text-purple-400">
+            <span>Iniciar Memória</span>
+            <span>→</span>
+          </div>
+        </div>
+
+        <!-- Card Jogo 3: Trilha Matemática -->
+        <div onclick="openModule('math-board')" class="card-orange bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-800 transition-all cursor-pointer flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl">🎲</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">Tabuleiro Online</span>
+            </div>
+            <h3 class="text-xl font-extrabold mb-2 group-hover:text-amber-600 transition">Trilha Matemática</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Role o dado e avance pelas 24 casas resolvendo desafios relâmpago! Jogue contra o FinBot ou em dupla no mesmo dispositivo.
+            </p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400">
+            <span>Abrir Tabuleiro</span>
+            <span>→</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== JOGO MAT 1: DOMINÓ DE FRAÇÕES ==================== -->
+    <section id="mod-math-domino" class="hidden animate-pop max-w-5xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para Matemática Básica</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <div>
+            <h2 class="text-2xl font-extrabold">🀄 Dominó de Frações & Equivalências</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Encaixe peças com o <strong>mesmo valor numérico</strong> nas pontas (ex.: 1/2 = 2/4 = 50% = 0,5).</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="dom-bot-count" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800">🤖 FinBot: 6 peças</span>
+            <span id="dom-pile-count" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-200">Monte: 12</span>
+            <button onclick="initDominoGame()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700 hover:opacity-80">Novo Jogo</button>
+          </div>
+        </div>
+
+        <div id="dom-status" class="p-3.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-sm font-semibold mb-5">
+          Sua vez! Selecione uma peça da sua mão para jogar.
+        </div>
+
+        <!-- Mesa do Dominó -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-500 mb-2">
+            <span>⬅️ Ponta Esquerda: <strong id="dom-left-val" class="text-sky-600 dark:text-sky-400"></strong></span>
+            <span>Mesa de Jogo</span>
+            <span>Ponta Direita: <strong id="dom-right-val" class="text-sky-600 dark:text-sky-400"></strong> ➡️</span>
+          </div>
+          <div id="dom-board" class="min-h-[110px] p-4 rounded-2xl bg-emerald-900/10 dark:bg-emerald-950/30 border-2 border-dashed border-emerald-500/40 flex flex-wrap items-center justify-center gap-2">
+          </div>
+        </div>
+
+        <!-- Controles de Encaixe quando uma peça está selecionada -->
+        <div id="dom-side-picker" class="hidden mb-5 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 flex flex-wrap items-center justify-between gap-3">
+          <span class="text-sm font-bold">Onde você deseja encaixar a peça selecionada?</span>
+          <div class="flex gap-2">
+            <button id="dom-btn-left" onclick="playSelectedDomino('left')" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-sky-600 text-white hover:bg-sky-700 disabled:opacity-40">⬅️ Encaixar na Esquerda</button>
+            <button id="dom-btn-right" onclick="playSelectedDomino('right')" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40">Encaixar na Direita ➡️</button>
+          </div>
+        </div>
+
+        <!-- Mão do Jogador -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-extrabold">🖐️ Suas Peças:</span>
+            <button id="dom-draw-btn" onclick="drawDominoTile()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-500 hover:bg-amber-600 text-white transition">
+              + Comprar do Monte / Passar
+            </button>
+          </div>
+          <div id="dom-player-hand" class="flex flex-wrap gap-3"></div>
+        </div>
+
+        <!-- Cola rápida de equivalências -->
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+          <strong>💡 Dica de Equivalência:</strong> 1/2 = 2/4 = 0,5 = 50% &nbsp;•&nbsp; 1/4 = 2/8 = 0,25 = 25% &nbsp;•&nbsp; 3/4 = 0,75 = 75% &nbsp;•&nbsp; 1/5 = 0,2 = 20% &nbsp;•&nbsp; 2/5 = 0,4 = 40% &nbsp;•&nbsp; 1/1 = 100%
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== JOGO MAT 2: MEMÓRIA MATEMÁTICA ==================== -->
+    <section id="mod-math-memory" class="hidden animate-pop max-w-4xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para Matemática Básica</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold">🧠 Memória Matemática</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Vire duas cartas e forme o par <strong>Expressão ↔ Resultado</strong>!</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="mem-topic" onchange="initMemoryGame()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
+              <option value="ops">Tabuada & Operações</option>
+              <option value="frac">Frações & Decimais</option>
+              <option value="pow">Potências & Raízes</option>
+            </select>
+            <span id="mem-moves" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200">Tentativas: 0</span>
+            <span id="mem-pairs" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200">Pares: 0 / 8</span>
+            <button onclick="initMemoryGame()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700">Reiniciar</button>
+          </div>
+        </div>
+
+        <div id="mem-grid" class="grid grid-cols-4 gap-3 sm:gap-4"></div>
+
+        <div id="mem-win-msg" class="hidden mt-6 p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-center">
+          <div class="text-4xl mb-2">🎉</div>
+          <h3 class="text-xl font-extrabold text-emerald-800 dark:text-emerald-200">Parabéns! Todos os pares encontrados!</h3>
+          <p id="mem-win-sub" class="text-sm text-slate-600 dark:text-slate-300 mt-1 mb-4"></p>
+          <button onclick="initMemoryGame()" class="px-5 py-2.5 rounded-xl text-xs font-extrabold bg-emerald-600 text-white hover:bg-emerald-700">Jogar Novamente</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== JOGO MAT 3: TRILHA MATEMÁTICA (TABULEIRO) ==================== -->
+    <section id="mod-math-board" class="hidden animate-pop max-w-5xl mx-auto">
+      <button onclick="goHome()" class="mb-4 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">← Voltar para Matemática Básica</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold">🎲 Trilha Matemática (Tabuleiro Online)</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Role o dado, resolva o desafio matemático para confirmar seu avanço e chegue à casa 24!</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="board-mode" onchange="initBoardGame()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
+              <option value="bot">1 Jogador vs. FinBot 🤖</option>
+              <option value="pvp">2 Jogadores (Local) 👥</option>
+            </select>
+            <button onclick="initBoardGame()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700">Reiniciar</button>
+          </div>
+        </div>
+
+        <!-- Placar e Dado -->
+        <div class="grid sm:grid-cols-3 gap-4 mb-6">
+          <div id="p1-card" class="p-4 rounded-xl border-2 border-sky-500 bg-sky-50 dark:bg-sky-950/30 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-bold text-sky-700 dark:text-sky-300">🔵 Jogador 1</div>
+              <div id="p1-pos-label" class="text-xl font-extrabold">Casa 1 / 24</div>
+            </div>
+            <span class="text-2xl">🚀</span>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center text-center">
+            <div id="board-turn-label" class="text-xs font-extrabold uppercase tracking-wide text-amber-600 dark:text-amber-400 mb-2">Vez do Jogador 1</div>
+            <button id="board-roll-btn" onclick="rollBoardDice()" class="px-5 py-2.5 rounded-xl font-extrabold text-sm bg-amber-500 hover:bg-amber-600 text-white shadow transition flex items-center gap-2">
+              <span id="dice-icon" class="text-lg">🎲</span> Jogar Dado
+            </button>
+          </div>
+
+          <div id="p2-card" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-between">
+            <div>
+              <div id="p2-name-label" class="text-xs font-bold text-rose-600 dark:text-rose-400">🔴 FinBot</div>
+              <div id="p2-pos-label" class="text-xl font-extrabold">Casa 1 / 24</div>
+            </div>
+            <span class="text-2xl">🛸</span>
+          </div>
+        </div>
+
+        <!-- Modal/Box de Pergunta do Tabuleiro -->
+        <div id="board-question-box" class="hidden mb-6 p-5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-400 dark:border-indigo-700">
+          <div class="flex items-center justify-between mb-2">
+            <span id="bq-badge" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-indigo-600 text-white">Desafio para avançar</span>
+            <span id="bq-dice-info" class="text-xs font-bold text-indigo-700 dark:text-indigo-300"></span>
+          </div>
+          <h3 id="bq-text" class="text-xl font-extrabold mb-4">Quanto é 8 × 7 - 6?</h3>
+          <div id="bq-options" class="grid grid-cols-3 gap-3"></div>
+        </div>
+
+        <!-- Log do Tabuleiro -->
+        <div id="board-log" class="mb-5 p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300">
+          Clique em "Jogar Dado" para iniciar a corrida matemática!
+        </div>
+
+        <!-- Grid Visual do Tabuleiro (24 Casas) -->
+        <div id="board-cells" class="grid grid-cols-4 sm:grid-cols-6 gap-2.5"></div>
+
+        <div class="mt-4 flex flex-wrap gap-4 text-xs text-slate-500">
+          <span>🚀 Início (1)</span>
+          <span>⚡ Bônus: Avança +2 casas</span>
+          <span>⚠️ Armadilha: Volta 2 casas</span>
+          <span>🏆 Chegada (24)</span>
+        </div>
+      </div>
+    </section>
+
     <!-- ==================== HUB INICIAL: 6º AO 8º ANO ==================== -->
-    <section id="hub-kids" class="animate-pop">
+    <section id="hub-kids" class="hidden animate-pop">
       <div class="text-center max-w-2xl mx-auto mb-10">
         <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 mb-3">
           TRILHA FUNDAMENTAL II • 12 A 14 ANOS
@@ -510,6 +808,7 @@
   </main>
 
   <script>
+    let currentArea = 'portal'; // 'portal' | 'fin' | 'math'
     let currentTrack = 'kids';
     let piggyChartInstance = null;
     let snowballChartInstance = null;
@@ -523,39 +822,566 @@
       document.documentElement.classList.toggle('dark');
     }
 
+    function updateTopNav() {
+      const pBtn = document.getElementById('nav-area-portal');
+      const fBtn = document.getElementById('nav-area-fin');
+      const mBtn = document.getElementById('nav-area-math');
+      const finSwitcher = document.getElementById('fin-track-switcher');
+
+      const baseClass = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300';
+      pBtn.className = baseClass;
+      fBtn.className = baseClass;
+      mBtn.className = baseClass;
+
+      if (currentArea === 'portal') {
+        pBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-900 text-white dark:bg-white dark:text-slate-900';
+        finSwitcher.classList.add('hidden');
+      } else if (currentArea === 'fin') {
+        fBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all area-active-fin';
+        finSwitcher.classList.remove('hidden');
+      } else if (currentArea === 'math') {
+        mBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all area-active-math';
+        finSwitcher.classList.add('hidden');
+      }
+    }
+
+    function hideAllSections() {
+      [
+        'portal-home', 'hub-math', 'hub-kids', 'hub-hs',
+        'mod-math-domino', 'mod-math-memory', 'mod-math-board',
+        'mod-kids-need', 'mod-kids-piggy', 'mod-kids-shop',
+        'mod-hs-snowball', 'mod-hs-salary', 'mod-hs-battle'
+      ].forEach(id => document.getElementById(id).classList.add('hidden'));
+    }
+
+    function goPortal() {
+      currentArea = 'portal';
+      updateTopNav();
+      hideAllSections();
+      document.getElementById('portal-home').classList.remove('hidden');
+    }
+
+    function enterArea(area) {
+      currentArea = area;
+      updateTopNav();
+      goHome();
+    }
+
     function setTrack(track) {
       currentTrack = track;
       const btnKids = document.getElementById('btn-track-kids');
       const btnHs = document.getElementById('btn-track-hs');
       if (track === 'kids') {
-        btnKids.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all tab-active-kids';
-        btnHs.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-300';
+        btnKids.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all tab-active-kids';
+        btnHs.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300';
       } else {
-        btnHs.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all tab-active-hs';
-        btnKids.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-300';
+        btnHs.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all tab-active-hs';
+        btnKids.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300';
       }
       goHome();
     }
 
-    function hideAllSections() {
-      ['hub-kids', 'hub-hs', 'mod-kids-need', 'mod-kids-piggy', 'mod-kids-shop', 'mod-hs-snowball', 'mod-hs-salary', 'mod-hs-battle']
-        .forEach(id => document.getElementById(id).classList.add('hidden'));
-    }
-
     function goHome() {
       hideAllSections();
-      document.getElementById(currentTrack === 'kids' ? 'hub-kids' : 'hub-hs').classList.remove('hidden');
+      if (currentArea === 'portal') {
+        document.getElementById('portal-home').classList.remove('hidden');
+      } else if (currentArea === 'math') {
+        document.getElementById('hub-math').classList.remove('hidden');
+      } else {
+        document.getElementById(currentTrack === 'kids' ? 'hub-kids' : 'hub-hs').classList.remove('hidden');
+      }
     }
 
     function openModule(mod) {
       hideAllSections();
       document.getElementById('mod-' + mod).classList.remove('hidden');
+      if (mod === 'math-domino') initDominoGame();
+      if (mod === 'math-memory') initMemoryGame();
+      if (mod === 'math-board') initBoardGame();
       if (mod === 'kids-need') initKidsNeed();
       if (mod === 'kids-piggy') updatePiggySim();
       if (mod === 'kids-shop') initKidsShop();
       if (mod === 'hs-snowball') updateSnowball();
       if (mod === 'hs-salary') initSalaryGame();
       if (mod === 'hs-battle') resetBattleGame();
+    }
+
+    /* ==================== JOGO MAT 1: DOMINÓ DE FRAÇÕES ==================== */
+    const dominoRepresentations = {
+      0.5: ['1/2', '2/4', '50%', '0,5'],
+      0.25: ['1/4', '2/8', '25%', '0,25'],
+      0.75: ['3/4', '6/8', '75%', '0,75'],
+      0.2: ['1/5', '2/10', '20%', '0,2'],
+      0.4: ['2/5', '4/10', '40%', '0,4'],
+      1.0: ['1/1', '4/4', '100%', '1,0']
+    };
+    let domState = {};
+
+    function createDominoDeck() {
+      const vals = [0.5, 0.25, 0.75, 0.2, 0.4, 1.0];
+      const deck = [];
+      let id = 1;
+      for (let i = 0; i < vals.length; i++) {
+        for (let j = i; j < vals.length; j++) {
+          const repsA = dominoRepresentations[vals[i]];
+          const repsB = dominoRepresentations[vals[j]];
+          deck.push({
+            id: id++,
+            leftVal: vals[i],
+            rightVal: vals[j],
+            leftLabel: repsA[Math.floor(Math.random() * repsA.length)],
+            rightLabel: repsB[Math.floor(Math.random() * repsB.length)]
+          });
+        }
+      }
+      return deck.sort(() => Math.random() - 0.5);
+    }
+
+    function initDominoGame() {
+      const deck = createDominoDeck();
+      const first = deck.pop();
+      domState = {
+        pile: deck,
+        playerHand: deck.splice(0, 6),
+        botHand: deck.splice(0, 6),
+        board: [first],
+        leftEnd: first.leftVal,
+        rightEnd: first.rightVal,
+        selectedIdx: null,
+        over: false
+      };
+      document.getElementById('dom-side-picker').classList.add('hidden');
+      setDominoStatus('Sua vez! Clique em uma peça sua que tenha o mesmo valor de uma das pontas da mesa.');
+      renderDomino();
+    }
+
+    function setDominoStatus(msg) {
+      document.getElementById('dom-status').innerHTML = msg;
+    }
+
+    function renderDomino() {
+      document.getElementById('dom-bot-count').textContent = `🤖 FinBot: ${domState.botHand.length} peças`;
+      document.getElementById('dom-pile-count').textContent = `Monte: ${domState.pile.length}`;
+      const leftRep = dominoRepresentations[domState.leftEnd][0];
+      const rightRep = dominoRepresentations[domState.rightEnd][0];
+      document.getElementById('dom-left-val').textContent = `${leftRep} (${domState.leftEnd.toString().replace('.', ',')})`;
+      document.getElementById('dom-right-val').textContent = `${rightRep} (${domState.rightEnd.toString().replace('.', ',')})`;
+
+      const boardEl = document.getElementById('dom-board');
+      boardEl.innerHTML = domState.board.map(t => `
+        <div class="inline-flex items-center rounded-xl border-2 border-slate-700 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-sm overflow-hidden text-xs sm:text-sm font-extrabold">
+          <span class="px-2.5 py-2 border-r border-slate-300 dark:border-slate-600 text-sky-700 dark:text-sky-300">${t.leftLabel}</span>
+          <span class="px-2.5 py-2 text-emerald-700 dark:text-emerald-300">${t.rightLabel}</span>
+        </div>
+      `).join('');
+
+      const handEl = document.getElementById('dom-player-hand');
+      handEl.innerHTML = domState.playerHand.map((t, idx) => {
+        const canLeft = t.leftVal === domState.leftEnd || t.rightVal === domState.leftEnd;
+        const canRight = t.leftVal === domState.rightEnd || t.rightVal === domState.rightEnd;
+        const playable = !domState.over && (canLeft || canRight);
+        const isSel = domState.selectedIdx === idx;
+        return `
+          <button onclick="selectPlayerDomino(${idx})" class="flex flex-col items-center rounded-xl border-2 transition transform hover:-translate-y-1 ${isSel ? 'border-amber-500 ring-2 ring-amber-400' : playable ? 'border-sky-500 bg-white dark:bg-slate-800' : 'border-slate-300 dark:border-slate-700 opacity-60 bg-slate-100 dark:bg-slate-900'} overflow-hidden shadow">
+            <span class="w-16 py-2.5 text-sm font-extrabold border-b border-slate-300 dark:border-slate-600">${t.leftLabel}</span>
+            <span class="w-16 py-2.5 text-sm font-extrabold">${t.rightLabel}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectPlayerDomino(idx) {
+      if (domState.over) return;
+      const t = domState.playerHand[idx];
+      const canLeft = t.leftVal === domState.leftEnd || t.rightVal === domState.leftEnd;
+      const canRight = t.leftVal === domState.rightEnd || t.rightVal === domState.rightEnd;
+
+      if (!canLeft && !canRight) {
+        setDominoStatus(`⚠️ A peça <strong>[${t.leftLabel} | ${t.rightLabel}]</strong> não equivale a nenhuma das pontas atuais!`);
+        return;
+      }
+
+      domState.selectedIdx = idx;
+      renderDomino();
+
+      if (canLeft && canRight && domState.leftEnd !== domState.rightEnd) {
+        const picker = document.getElementById('dom-side-picker');
+        picker.classList.remove('hidden');
+        document.getElementById('dom-btn-left').disabled = !canLeft;
+        document.getElementById('dom-btn-right').disabled = !canRight;
+      } else {
+        playSelectedDomino(canLeft ? 'left' : 'right');
+      }
+    }
+
+    function playSelectedDomino(side) {
+      const idx = domState.selectedIdx;
+      if (idx === null) return;
+      const tile = { ...domState.playerHand[idx] };
+      domState.playerHand.splice(idx, 1);
+      domState.selectedIdx = null;
+      document.getElementById('dom-side-picker').classList.add('hidden');
+
+      if (side === 'left') {
+        if (tile.rightVal !== domState.leftEnd) {
+          [tile.leftVal, tile.rightVal] = [tile.rightVal, tile.leftVal];
+          [tile.leftLabel, tile.rightLabel] = [tile.rightLabel, tile.leftLabel];
+        }
+        domState.board.unshift(tile);
+        domState.leftEnd = tile.leftVal;
+      } else {
+        if (tile.leftVal !== domState.rightEnd) {
+          [tile.leftVal, tile.rightVal] = [tile.rightVal, tile.leftVal];
+          [tile.leftLabel, tile.rightLabel] = [tile.rightLabel, tile.leftLabel];
+        }
+        domState.board.push(tile);
+        domState.rightEnd = tile.rightVal;
+      }
+
+      renderDomino();
+      if (domState.playerHand.length === 0) {
+        domState.over = true;
+        setDominoStatus('🏆 <strong>Vitória!</strong> Você zerou suas peças dominando as frações equivalentes!');
+        return;
+      }
+      setTimeout(botDominoTurn, 600);
+    }
+
+    function drawDominoTile() {
+      if (domState.over) return;
+      if (domState.pile.length > 0) {
+        const drawn = domState.pile.pop();
+        domState.playerHand.push(drawn);
+        setDominoStatus(`🃏 Você comprou <strong>[${drawn.leftLabel} | ${drawn.rightLabel}]</strong> do monte.`);
+        renderDomino();
+      } else {
+        setDominoStatus('⏭️ Monte vazio! Vez passada para o FinBot...');
+        setTimeout(botDominoTurn, 600);
+      }
+    }
+
+    function botDominoTurn() {
+      if (domState.over) return;
+      let played = false;
+      for (let i = 0; i < domState.botHand.length; i++) {
+        const t = { ...domState.botHand[i] };
+        if (t.leftVal === domState.leftEnd || t.rightVal === domState.leftEnd) {
+          if (t.rightVal !== domState.leftEnd) {
+            [t.leftVal, t.rightVal] = [t.rightVal, t.leftVal];
+            [t.leftLabel, t.rightLabel] = [t.rightLabel, t.leftLabel];
+          }
+          domState.board.unshift(t);
+          domState.leftEnd = t.leftVal;
+          domState.botHand.splice(i, 1);
+          setDominoStatus(`🤖 FinBot encaixou <strong>[${t.leftLabel} | ${t.rightLabel}]</strong> na esquerda. Sua vez!`);
+          played = true;
+          break;
+        }
+        if (t.leftVal === domState.rightEnd || t.rightVal === domState.rightEnd) {
+          if (t.leftVal !== domState.rightEnd) {
+            [t.leftVal, t.rightVal] = [t.rightVal, t.leftVal];
+            [t.leftLabel, t.rightLabel] = [t.rightLabel, t.leftLabel];
+          }
+          domState.board.push(t);
+          domState.rightEnd = t.rightVal;
+          domState.botHand.splice(i, 1);
+          setDominoStatus(`🤖 FinBot encaixou <strong>[${t.leftLabel} | ${t.rightLabel}]</strong> na direita. Sua vez!`);
+          played = true;
+          break;
+        }
+      }
+
+      if (!played) {
+        if (domState.pile.length > 0) {
+          domState.botHand.push(domState.pile.pop());
+          setDominoStatus('🤖 FinBot não tinha peça e comprou do monte. Sua vez!');
+        } else {
+          setDominoStatus('🤖 FinBot passou a vez (sem peças compatíveis). Sua vez!');
+        }
+      }
+
+      renderDomino();
+      if (domState.botHand.length === 0) {
+        domState.over = true;
+        setDominoStatus('🤖 <strong>FinBot venceu desta vez!</strong> Clique em "Novo Jogo" para a revanche.');
+      }
+    }
+
+    /* ==================== JOGO MAT 2: MEMÓRIA MATEMÁTICA ==================== */
+    const memoryDecks = {
+      ops: [
+        { a: '7 × 8', b: '56' }, { a: '9 × 6', b: '54' }, { a: '12 × 5', b: '60' }, { a: '81 ÷ 9', b: '9' },
+        { a: '15 + 27', b: '42' }, { a: '100 - 37', b: '63' }, { a: '14 × 3', b: '42' }, { a: '96 ÷ 8', b: '12' }
+      ],
+      frac: [
+        { a: '1/2', b: '50%' }, { a: '3/4', b: '0,75' }, { a: '1/4', b: '25%' }, { a: '2/5', b: '0,4' },
+        { a: '1/10', b: '10%' }, { a: '3/5', b: '60%' }, { a: '1/8', b: '0,125' }, { a: '4/5', b: '80%' }
+      ],
+      pow: [
+        { a: '2⁵', b: '32' }, { a: '3³', b: '27' }, { a: '√144', b: '12' }, { a: '√81', b: '9' },
+        { a: '5²', b: '25' }, { a: '10³', b: '1.000' }, { a: '√169', b: '13' }, { a: '4³', b: '64' }
+      ]
+    };
+    let memState = {};
+
+    function initMemoryGame() {
+      const topic = document.getElementById('mem-topic').value;
+      const basePairs = memoryDecks[topic];
+      // Evitar valores repetidos no mesmo tabuleiro garantindo pares únicos
+      const cards = [];
+      basePairs.forEach((p, pairId) => {
+        cards.push({ id: `${pairId}-a`, pairId, label: p.a, flipped: false, matched: false });
+        cards.push({ id: `${pairId}-b`, pairId, label: p.b, flipped: false, matched: false });
+      });
+      // No deck 'ops', ajustar para não haver dois '42'
+      if (topic === 'ops') {
+        cards[8].label = '16 + 27';
+        cards[9].label = '43';
+      }
+
+      memState = {
+        cards: cards.sort(() => Math.random() - 0.5),
+        flippedIndices: [],
+        moves: 0,
+        matchedCount: 0,
+        lock: false
+      };
+      document.getElementById('mem-win-msg').classList.add('hidden');
+      renderMemoryGrid();
+    }
+
+    function renderMemoryGrid() {
+      document.getElementById('mem-moves').textContent = `Tentativas: ${memState.moves}`;
+      document.getElementById('mem-pairs').textContent = `Pares: ${memState.matchedCount} / 8`;
+      const grid = document.getElementById('mem-grid');
+      grid.innerHTML = memState.cards.map((c, idx) => {
+        const show = c.flipped || c.matched;
+        return `
+          <button onclick="flipMemoryCard(${idx})" class="h-20 sm:h-24 rounded-2xl font-extrabold text-base sm:text-xl transition-all transform ${c.matched ? 'bg-emerald-100 dark:bg-emerald-900/50 border-2 border-emerald-500 text-emerald-800 dark:text-emerald-200 scale-95' : show ? 'bg-purple-600 text-white shadow-md' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-slate-400'}">
+            ${show ? c.label : '?'}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function flipMemoryCard(idx) {
+      if (memState.lock) return;
+      const card = memState.cards[idx];
+      if (card.flipped || card.matched) return;
+
+      card.flipped = true;
+      memState.flippedIndices.push(idx);
+      renderMemoryGrid();
+
+      if (memState.flippedIndices.length === 2) {
+        memState.moves++;
+        memState.lock = true;
+        const [i1, i2] = memState.flippedIndices;
+        const c1 = memState.cards[i1];
+        const c2 = memState.cards[i2];
+
+        if (c1.pairId === c2.pairId) {
+          c1.matched = true;
+          c2.matched = true;
+          memState.matchedCount++;
+          memState.flippedIndices = [];
+          memState.lock = false;
+          renderMemoryGrid();
+
+          if (memState.matchedCount === 8) {
+            document.getElementById('mem-win-msg').classList.remove('hidden');
+            document.getElementById('mem-win-sub').textContent = `Você completou o tabuleiro em ${memState.moves} tentativas!`;
+          }
+        } else {
+          setTimeout(() => {
+            c1.flipped = false;
+            c2.flipped = false;
+            memState.flippedIndices = [];
+            memState.lock = false;
+            renderMemoryGrid();
+          }, 850);
+        }
+      }
+    }
+
+    /* ==================== JOGO MAT 3: TRILHA MATEMÁTICA (TABULEIRO) ==================== */
+    const boardSpecials = {
+      4: { type: 'bonus', delta: 2, label: '⚡ +2' },
+      7: { type: 'trap', delta: -2, label: '⚠️ -2' },
+      11: { type: 'bonus', delta: 2, label: '⚡ +2' },
+      15: { type: 'trap', delta: -2, label: '⚠️ -2' },
+      19: { type: 'bonus', delta: 2, label: '⚡ +2' },
+      22: { type: 'trap', delta: -2, label: '⚠️ -2' }
+    };
+    let boardState = {};
+
+    function generateBoardQuestion() {
+      const a = Math.floor(Math.random() * 11) + 2;
+      const b = Math.floor(Math.random() * 11) + 2;
+      const c = Math.floor(Math.random() * 15) + 1;
+      const mode = Math.floor(Math.random() * 3);
+      let text = '', ans = 0;
+
+      if (mode === 0) {
+        text = `${a} × ${b} + ${c} = ?`;
+        ans = a * b + c;
+      } else if (mode === 1) {
+        const mult = a * b;
+        text = `${mult} ÷ ${a} + ${c} = ?`;
+        ans = b + c;
+      } else {
+        text = `(${a} + ${b}) × 2 - ${c} = ?`;
+        ans = (a + b) * 2 - c;
+      }
+
+      const opts = new Set([ans]);
+      while (opts.size < 3) {
+        const offset = (Math.floor(Math.random() * 5) + 1) * (Math.random() > 0.5 ? 1 : -1);
+        opts.add(ans + offset);
+      }
+      return { text, ans, options: Array.from(opts).sort(() => Math.random() - 0.5) };
+    }
+
+    function initBoardGame() {
+      const mode = document.getElementById('board-mode').value;
+      boardState = {
+        mode,
+        turn: 1, // 1 ou 2
+        p1: 1,
+        p2: 1,
+        pendingDice: 0,
+        currentQ: null,
+        over: false
+      };
+      document.getElementById('p2-name-label').textContent = mode === 'bot' ? '🔴 FinBot' : '🔴 Jogador 2';
+      document.getElementById('board-question-box').classList.add('hidden');
+      document.getElementById('board-roll-btn').disabled = false;
+      document.getElementById('board-log').textContent = 'Partida iniciada! Jogador 1 começa.';
+      renderBoard();
+    }
+
+    function renderBoard() {
+      document.getElementById('p1-pos-label').textContent = `Casa ${boardState.p1} / 24`;
+      document.getElementById('p2-pos-label').textContent = `Casa ${boardState.p2} / 24`;
+
+      const p2Name = boardState.mode === 'bot' ? 'FinBot' : 'Jogador 2';
+      document.getElementById('board-turn-label').textContent = boardState.over
+        ? 'Fim de Jogo!'
+        : `Vez de: ${boardState.turn === 1 ? 'Jogador 1 🔵' : p2Name + ' 🔴'}`;
+
+      const cellsEl = document.getElementById('board-cells');
+      let html = '';
+      for (let i = 1; i <= 24; i++) {
+        const sp = boardSpecials[i];
+        let bg = 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700';
+        let tag = '';
+        if (i === 1) { bg = 'bg-sky-100 dark:bg-sky-950/50 border-sky-400'; tag = '🚀 Início'; }
+        else if (i === 24) { bg = 'bg-amber-100 dark:bg-amber-950/50 border-amber-400'; tag = '🏆 Fim'; }
+        else if (sp?.type === 'bonus') { bg = 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-400'; tag = sp.label; }
+        else if (sp?.type === 'trap') { bg = 'bg-rose-50 dark:bg-rose-950/30 border-rose-400'; tag = sp.label; }
+
+        html += `
+          <div class="p-2.5 rounded-xl border ${bg} min-h-[68px] flex flex-col justify-between">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+              <span>#${i}</span>
+              <span>${tag}</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-lg mt-1">
+              ${boardState.p1 === i ? '<span title="Jogador 1">🔵</span>' : ''}
+              ${boardState.p2 === i ? '<span title="Jogador 2 / Bot">🔴</span>' : ''}
+            </div>
+          </div>
+        `;
+      }
+      cellsEl.innerHTML = html;
+    }
+
+    function rollBoardDice() {
+      if (boardState.over) return;
+      const dice = Math.floor(Math.random() * 6) + 1;
+      const diceIcons = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+      document.getElementById('dice-icon').textContent = diceIcons[dice - 1];
+      document.getElementById('board-roll-btn').disabled = true;
+
+      if (boardState.turn === 2 && boardState.mode === 'bot') {
+        document.getElementById('board-log').textContent = `🤖 FinBot tirou ${dice} no dado e está calculando...`;
+        setTimeout(() => {
+          const botRight = Math.random() < 0.72; // 72% de acerto do bot
+          if (botRight) {
+            moveBoardPlayer(2, dice, '🤖 FinBot acertou o desafio e');
+          } else {
+            document.getElementById('board-log').textContent = `🤖 FinBot errou o cálculo e permaneceu na casa ${boardState.p2}! Sua vez.`;
+            boardState.turn = 1;
+            document.getElementById('board-roll-btn').disabled = false;
+            renderBoard();
+          }
+        }, 900);
+        return;
+      }
+
+      boardState.pendingDice = dice;
+      boardState.currentQ = generateBoardQuestion();
+      const qBox = document.getElementById('board-question-box');
+      qBox.classList.remove('hidden');
+      document.getElementById('bq-dice-info').textContent = `Dado: ${dice} casa(s)`;
+      document.getElementById('bq-text').textContent = boardState.currentQ.text;
+      document.getElementById('bq-options').innerHTML = boardState.currentQ.options.map(opt => `
+        <button onclick="answerBoardQuestion(${opt})" class="py-3 rounded-xl font-extrabold bg-white dark:bg-slate-900 border border-indigo-300 dark:border-indigo-700 hover:bg-indigo-600 hover:text-white transition">
+          ${opt}
+        </button>
+      `).join('');
+    }
+
+    function answerBoardQuestion(chosen) {
+      document.getElementById('board-question-box').classList.add('hidden');
+      const player = boardState.turn;
+      const pName = player === 1 ? '🔵 Jogador 1' : '🔴 Jogador 2';
+
+      if (chosen === boardState.currentQ.ans) {
+        moveBoardPlayer(player, boardState.pendingDice, `✅ ${pName} acertou e`);
+      } else {
+        document.getElementById('board-log').textContent = `❌ ${pName} errou (resposta era ${boardState.currentQ.ans}) e não avançou desta vez!`;
+        nextBoardTurn();
+      }
+    }
+
+    function moveBoardPlayer(player, steps, prefixMsg) {
+      let pos = player === 1 ? boardState.p1 : boardState.p2;
+      pos = Math.min(24, pos + steps);
+      let extraMsg = '';
+
+      if (boardSpecials[pos]) {
+        const sp = boardSpecials[pos];
+        pos = Math.max(1, Math.min(24, pos + sp.delta));
+        extraMsg = sp.type === 'bonus' ? ' Caiu no BÔNUS (+2 casas)!' : ' Caiu na ARMADILHA (-2 casas)!';
+      }
+
+      if (player === 1) boardState.p1 = pos;
+      else boardState.p2 = pos;
+
+      document.getElementById('board-log').textContent = `${prefixMsg} avançou ${steps} casa(s) para a #${pos}.${extraMsg}`;
+      renderBoard();
+
+      if (pos >= 24) {
+        boardState.over = true;
+        const winner = player === 1 ? '🔵 Jogador 1' : (boardState.mode === 'bot' ? '🤖 FinBot' : '🔴 Jogador 2');
+        document.getElementById('board-log').textContent = `🏆 FIM DE JOGO! ${winner} cruzou a linha de chegada e venceu a Trilha Matemática!`;
+        document.getElementById('board-roll-btn').disabled = true;
+        renderBoard();
+        return;
+      }
+
+      nextBoardTurn();
+    }
+
+    function nextBoardTurn() {
+      boardState.turn = boardState.turn === 1 ? 2 : 1;
+      renderBoard();
+      if (boardState.turn === 2 && boardState.mode === 'bot') {
+        setTimeout(rollBoardDice, 800);
+      } else {
+        document.getElementById('board-roll-btn').disabled = false;
+      }
     }
 
     /* ==================== LÓGICA KIDS 1: PRECISO OU SÓ QUERO ==================== */
@@ -629,7 +1455,7 @@
 
     function selectPiggyGoal(name, price, icon) {
       piggyGoal = { name, price };
-      document.querySelectorAll('.piggy-goal-btn').forEach((btn, idx) => {
+      document.querySelectorAll('.piggy-goal-btn').forEach((btn) => {
         btn.className = 'piggy-goal-btn p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-left transition';
       });
       const idxMap = { 'Fone Bluetooth': 0, 'Tênis Esportivo': 1, 'Console Portátil': 2 };
@@ -648,7 +1474,7 @@
       while (total < piggyGoal.price && weeks < 52) {
         weeks++;
         pocket += weekly;
-        total = (total + weekly) * 1.05; // 5% rendimento semanal didático
+        total = (total + weekly) * 1.05;
         labels.push(`Sem ${weeks}`);
         pocketSeries.push(Number(pocket.toFixed(2)));
         totalSeries.push(Number(total.toFixed(2)));
@@ -778,7 +1604,7 @@
       const monthly = Number(document.getElementById('sb-monthly').value) || 300;
       const months = Math.min(60, Math.max(6, Number(document.getElementById('sb-months').value) || 24));
       const rate = (Number(document.getElementById('sb-rate').value) || 0.9) / 100;
-      const debtRate = 0.08; // 8% ao mês rotativo cartão
+      const debtRate = 0.08;
 
       const labels = [], investData = [], debtData = [];
       let inv = 0;
@@ -851,7 +1677,7 @@
       if (salState.over) { initSalaryGame(); return; }
       const wants = Number(document.getElementById('sal-wants').value);
       const saved = Math.max(0, salState.income - salState.fixed - wants);
-      salState.reserve = (salState.reserve + saved) * 1.01; // 1% rendimento mensal na reserva
+      salState.reserve = (salState.reserve + saved) * 1.01;
 
       if (wants < 200) salState.happy = Math.max(10, salState.happy - 10);
       else if (wants >= 400) salState.happy = Math.min(100, salState.happy + 5);
@@ -976,6 +1802,9 @@
         options: { responsive: true, maintainAspectRatio: false }
       });
     }
+
+    // Inicializa no Portal Principal
+    updateTopNav();
   </script>
 </body>
 </html>
